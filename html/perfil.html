@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gerencie seu perfil e veja seu histórico de pedidos na Pizzaria Moraes.">
+    
+    <!-- Título da Página -->
+    <title>Meu Perfil - BoraComer</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Link para a biblioteca de ícones do Google (Material Icons) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Pré-carregamento da fonte do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <!-- Cabeçalho da página -->
+    <header class="app-header-simple">
+        <h1>Meu Perfil</h1>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        
+        <!-- Seção de informações do perfil -->
+        <section class="profile-header">
+            <img src="/img/LOGO-BORACOMER-(fdcheddar).png" alt="Foto do Perfil" class="profile-picture">
+            <h2 id="profile-user-name">Carregando...</h2>
+        </section>
+
+        <!-- NOVO: Resumo de Saldos -->
+        <section class="balances-summary">
+            <div class="balance-card">
+                <i class="material-icons icon-referral">group_add</i>
+                <div class="balance-info">
+                    <span>Crédito de Indicação</span>
+                    <strong id="referral-credit-balance">R$ 0,00</strong>
+                </div>
+            </div>
+            <div class="balance-card">
+                <i class="material-icons icon-cashback">redeem</i>
+                <div class="balance-info">
+                    <span>Cashback de Parceiros</span>
+                    <strong id="cashback-balance">R$ 0,00</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulário com os dados do usuário -->
+        <form id="profile-form">
+            <div class="form-group">
+                <label for="profile-nome">Nome Completo</label>
+                <input type="text" id="profile-nome" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-email">Email</label>
+                <input type="email" id="profile-email" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-telefone">Telefone</label>
+                <input type="tel" id="profile-telefone" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-cpf">CPF</label>
+                <input type="text" id="profile-cpf" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-nascimento">Data de Nascimento</label>
+                <input type="text" id="profile-nascimento" readonly>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="profile-actions">
+                <button type="button" id="edit-profile-btn" class="btn btn-secondary">Editar Perfil</button>
+                <button type="submit" id="save-profile-btn" class="btn btn-primary" style="display: none;">Salvar Alterações</button>
+            </div>
+        </form>
+
+        <hr class="section-divider">
+
+        <!-- Seção de Histórico de Pedidos -->
+        <section class="order-history">
+            <h2>Histórico de Pedidos</h2>
+            <div id="order-history-list">
+                <!-- O JavaScript irá gerar os cards de pedido aqui. Exemplo de estrutura:
+                <div class="order-history-card">
+                    <div class="order-summary">
+                        <div class="order-info"> ... </div>
+                        <div class="order-total"> ... </div>
+                        <i class="material-icons toggle-details-icon">expand_more</i>
+                    </div>
+                    <div class="order-details-content">
+                        <h4>Itens do Pedido:</h4>
+                        <ul>
+                            <li>2x Pizza Calabresa</li>
+                            <li>1x Coca-Cola 2L</li>
+                        </ul>
+                        <button class="reorder-btn">Pedir Novamente</button>
+                    </div>
+                </div>
+                -->
+                <p>Buscando seu histórico...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Barra de Navegação Inferior Fixa -->
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item">
+            <i class="material-icons">restaurant_menu</i>
+            <span>Cardápio</span>
+        </a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i>
+            <span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="parceiros.html" class="nav-item"><i class="material-icons">storefront</i><span>Parceiros</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item active"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <!-- Script da lógica do perfil -->
+    <script type="module" src="/js/perfil.js"></script>
+
+    <!-- Script principal para funções globais como o "ouvinte" de notificação de status -->
+    <script type="module" src="/js/main.js"></script>
+
+</body>
+</html>

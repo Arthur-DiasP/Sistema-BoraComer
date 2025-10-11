@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Ganhos - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/motoboy-portal.css"> 
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="app-page motoboy-portal-page">
+
+    <header class="motoboy-header">
+        <div class="header-content">
+            <h1>Meus Ganhos</h1>
+            <span id="motoboy-name">Carregando...</span>
+        </div>
+        <button id="logout-btn" class="logout-button" title="Sair"><i class="material-icons">logout</i></button>
+    </header>
+
+    <main class="container">
+
+        <!-- RESUMO DOS GANHOS -->
+        <section class="motoboy-dashboard">
+            <div class="stat-card">
+                <strong id="total-earnings">R$ 0,00</strong>
+                <span>Ganhos Totais (Mês)</span>
+            </div>
+            <div class="stat-card">
+                <strong id="base-salary">R$ 0,00</strong>
+                <span>Salário Base (Mês)</span>
+            </div>
+            <div class="stat-card">
+                <strong id="total-bonus">R$ 0,00</strong>
+                <span>Total em Bônus (Mês)</span>
+            </div>
+        </section>
+
+        <!-- FILTRO DE PERÍODO -->
+        <div class="form-group">
+            <label for="bonus-month-filter">Selecionar Período</label>
+            <select id="bonus-month-filter" class="form-control"></select>
+        </div>
+
+        <!-- GRÁFICO DE COMPOSIÇÃO DE GANHOS -->
+        <section class="card" id="earnings-chart-container">
+            <h3>Composição dos Ganhos</h3>
+            <div class="chart-wrapper">
+                <canvas id="bonus-composition-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- EXTRATO DETALHADO -->
+        <section id="earnings-statement">
+            <h2 id="pending-deliveries-title">Extrato Detalhado</h2>
+            <div id="statement-list">
+                <p>Buscando seu extrato de ganhos...</p>
+                <!--
+                Exemplo de item de extrato:
+                <div class="statement-card">
+                    <div class="statement-header">
+                        <span>Pedido #a1b2c3d4</span>
+                        <time>15/07/2024 20:35</time>
+                    </div>
+                    <div class="statement-body">
+                        <div class="earning-item"><span>Taxa Base</span><strong>R$ 7,50</strong></div>
+                        <div class="earning-item bonus"><span><i class="material-icons">whatshot</i>Bônus de Pico</span><strong>R$ 2,00</strong></div>
+                        <div class="earning-item bonus"><span><i class="material-icons">rocket_launch</i>Entrega Rápida</span><strong>R$ 3,00</strong></div>
+                    </div>
+                    <div class="statement-footer">
+                        <span>Total da Corrida</span>
+                        <strong>R$ 12,50</strong>
+                    </div>
+                </div>
+                -->
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="motoboy-portal.html" class="nav-item"><i class="material-icons">motorcycle</i><span>Principal</span></a>
+        <a href="motoboy-bonus.html" class="nav-item active"><i class="material-icons">emoji_events</i><span>Ganhos</span></a>
+        <a href="motoboy-perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <!-- Biblioteca de Gráficos Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="/js/motoboy-bonus.js"></script>
+</body>
+</html>

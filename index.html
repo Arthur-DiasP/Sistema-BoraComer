@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pizzaria Moraes - O melhor delivery de pizza da cidade.">
+    
+    <!-- Título da Página -->
+    <title>BoraComer - Esquentando o Forno...</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Pré-carregamento da fonte do Google para melhor performance - Opcional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="splash-screen">
+
+    <!-- Conteúdo principal da tela de splash -->
+    <div class="splash-content">
+        <!-- A imagem central que pulsa para criar um efeito dinâmico -->
+        <img src="img/LOGO-BORACOMER-(fdcheddar).png" alt="Logo BoraComer" class="splash-image">
+    </div>
+
+    <!-- Rodapé com a mensagem de carregamento -->
+    <footer>
+        <p>ESQUENTANDO O FORNO</p>
+    </footer>
+
+    <!-- Script JavaScript para o redirecionamento -->
+    <script>
+        // Esta função será executada quando a página terminar de carregar.
+        // Ela espera 5000 milissegundos (5 segundos) e então redireciona o usuário.
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // Redireciona para a página de login dentro da pasta html
+                window.location.href = 'html/login.html';
+            }, 5000); 
+        });
+    </script>
+
+</body>
+</html>

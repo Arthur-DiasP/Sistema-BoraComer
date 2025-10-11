@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jogue o Jogo da Velha Premiado e concorra a prêmios incríveis!">
+    <title>Jogo Premiado - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <header class="app-header-simple">
+        <h1>Jogo Premiado</h1>
+    </header>
+
+    <main class="container">
+        <!-- Container principal do jogo, que mostrará diferentes estados -->
+        <div id="game-container">
+            
+            <!-- Estado de Carregamento -->
+            <div id="loading-state" class="card" style="text-align: center;">
+                <p>Buscando competições ativas...</p>
+                <div class="spinner"></div>
+            </div>
+
+            <!-- Estado de Jogo Ativo (inicialmente oculto) -->
+            <div id="active-game-state" style="display: none;">
+                <section class="game-intro card">
+                    <h2 id="campaign-name">Nome da Campanha</h2>
+                    <p><strong>Prêmio:</strong> <span id="campaign-prize"></span></p>
+                    <p id="campaign-rules"></p>
+                </section>
+                
+                <section class="tic-tac-toe-section">
+                    <div id="game-status" class="game-status-message">Escolha uma célula para começar!</div>
+                    <div id="tic-tac-toe-board" class="tic-tac-toe-board">
+                        <div class="cell" data-index="0"></div>
+                        <div class="cell" data-index="1"></div>
+                        <div class="cell" data-index="2"></div>
+                        <div class="cell" data-index="3"></div>
+                        <div class="cell" data-index="4"></div>
+                        <div class="cell" data-index="5"></div>
+                        <div class="cell" data-index="6"></div>
+                        <div class="cell" data-index="7"></div>
+                        <div class="cell" data-index="8"></div>
+                    </div>
+                    <div id="game-controls" class="game-controls">
+                        <button id="compete-btn" class="btn btn-primary"><i class="material-icons">emoji_events</i> Concorrer</button>
+                        <button id="reset-btn" class="btn btn-secondary">Nova Partida</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Estado Sem Jogo Ativo (inicialmente oculto) -->
+            <div id="no-game-state" class="card" style="display: none; text-align: center;">
+                <h2>Que pena!</h2>
+                <p>Nenhuma competição do Jogo da Velha está ativa no momento. Volte mais tarde para não perder a próxima!</p>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i><span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="anuncie.html" class="nav-item"><i class="material-icons">campaign</i><span>Anuncie</span></a>
+        <a href="jogo.html" class="nav-item active"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <!-- Modal para Pagamento PIX -->
+    <div class="payment-modal-overlay" id="pix-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-pix-modal-btn">&times;</button>
+            <h2>Pagar para Concorrer</h2>
+            <div class="modal-total-display"><span>Valor da Inscrição</span><strong id="pix-modal-total-value">R$ 0,00</strong></div>
+            <p class="pix-instructions">Escaneie o QR Code ou use o código para pagar e confirmar sua participação.</p>
+            <div class="pix-qr-code" id="pix-qr-code-container"><div class="spinner"></div></div>
+            <div class="pix-copy-paste">
+                <input type="text" id="pix-copy-paste-code" readonly value="Gerando código...">
+                <button id="copy-pix-code-btn" title="Copiar código"><i class="material-icons">content_copy</i></button>
+            </div>
+            <div class="modal-actions">
+                <button id="payment-made-btn" class="btn btn-primary btn-block">Já paguei, confirmar!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Participação -->
+    <div class="payment-modal-overlay" id="confirmation-overlay">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-header">
+                <div class="confirmation-icon ticket-icon"><i class="material-icons">celebration</i></div>
+            </div>
+            <div class="confirmation-body">
+                <h2 id="confirmation-title">Boa Sorte!</h2>
+                <p id="confirmation-message">Sua participação no sorteio desta campanha está confirmada! O resultado sai após o término.</p>
+                <button id="close-confirmation-btn" class="btn btn-primary btn-block">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/jogo.js"></script>
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

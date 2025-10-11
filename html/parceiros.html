@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conheça os parceiros da Pizzaria Moraes e aproveite vantagens exclusivas.">
+    <title>Parceiros da Região - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <header class="app-header-simple">
+        <h1>Parceiros da Região</h1>
+    </header>
+
+    <main class="container">
+        <section class="page-intro">
+            <h2>Comércio Local Premiado!</h2>
+            <p>Aproveite os benefícios exclusivos que nossos parceiros oferecem para você, cliente BoraComer. Gere seu cupom e apresente no estabelecimento!</p>
+        </section>
+
+        <section id="partners-list" class="partners-grid">
+            <!-- Os cards dos parceiros serão inseridos aqui pelo JS -->
+            <p>Buscando parceiros...</p>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i><span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="parceiros.html" class="nav-item active"><i class="material-icons">storefront</i><span>Parceiros</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+
+    <!-- MODAL PARA EXIBIR O CUPOM GERADO -->
+    <div class="payment-modal-overlay" id="coupon-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-coupon-modal-btn" aria-label="Fechar">&times;</button>
+            <h2 id="modal-partner-name">Nome do Parceiro</h2>
+            <p>Apresente este código no estabelecimento para validar sua vantagem:</p>
+            <div class="coupon-code-display partner-coupon">
+                <strong id="generated-coupon-code">CARREGANDO...</strong>
+            </div>
+            <small class="coupon-rules">Este cupom é de uso único e pessoal.</small>
+        </div>
+    </div>
+    
+    <script type="module" src="/js/parceiros.js"></script>
+    <script type="module" src="/js/main.js"></script>
+
+</body>
+</html>

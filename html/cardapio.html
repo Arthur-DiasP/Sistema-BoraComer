@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore nosso cardápio completo com as melhores pizzas e bebidas. Peça agora na Pizzaria Moraes.">
+    
+    <!-- Título da Página -->
+    <title>Cardápio - BoraComer</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Link para os Ícones do Google (Material Icons) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Pré-carregamento das fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+
+    <!-- Script para Carregamento Dinâmico do Tema -->
+    <script type="module">
+        import { firestore } from '/js/firebase-config.js';
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        async function applyTheme() {
+            try {
+                const docRef = doc(firestore, "config", "layout");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    for (const key in settings.colors) {
+                        document.documentElement.style.setProperty(key, settings.colors[key]);
+                    }
+                    // Adiciona a classe de layout no body
+                    document.body.classList.add(`layout-${settings.cardapioLayout || 'grid'}`);
+                }
+            } catch (error) {
+                console.error("Erro ao aplicar tema:", error);
+            }
+        }
+        applyTheme();
+    </script>
+</head>
+
+<body class="app-page cardapio-page">
+
+    <!-- Cabeçalho Superior Fixo -->
+    <header class="app-header">
+        <div class="logo-container">
+            <img src="/img/LOGO-BORACOMER-(fdcheddar).png" alt="Logo BoraComer">
+            <h1><span class="logo-pizzaria">Bora</span> <span class="logo-moraes">Comer</span></h1>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal da Página -->
+    <main class="container">
+
+        <!-- Carrossel de Anúncios (Banners) -->
+        <div id="banner-slider-container" class="banner-slider" style="display: none;">
+            <div class="banner-slides">
+                <!-- Slides serão inseridos aqui dinamicamente pelo JS -->
+            </div>
+            <div class="banner-dots">
+                <!-- Pontos de navegação serão inseridos aqui -->
+            </div>
+            <!-- Barra de progresso para indicar o tempo do slide -->
+            <div class="banner-progress-bar"></div>
+        </div>
+        
+        <!-- ================================================== -->
+        <!--     CARROSSEL DE ANUNCIANTES PARCEIROS             -->
+        <!-- ================================================== -->
+        <section id="advertiser-section" style="display: none;">
+            <h2>Parceiros da Região</h2>
+            <div id="advertiser-slider-container" class="advertiser-slider">
+                <div class="advertiser-slides">
+                    <!-- Anúncios de parceiros serão inseridos aqui -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Oferta Exclusiva -->
+        <section id="ofertas-section" style="display: none;">
+            <div class="oferta-card">
+                <div class="oferta-image-container">
+                    <img id="oferta-imagem" src="" alt="Imagem da Oferta">
+                    <div class="oferta-tag">OFERTA EXCLUSIVA</div>
+                </div>
+                <div class="oferta-details">
+                    <div id="oferta-countdown" class="oferta-countdown">
+                        <!-- O contador será gerado aqui -->
+                    </div>
+                    <h3 id="oferta-nome">Nome da Oferta Imperdível</h3>
+                    <p id="oferta-descricao">Descrição detalhada dos itens inclusos nesta promoção incrível.</p>
+                    <div class="oferta-pricing">
+                        <span id="oferta-preco-original">de R$ 99,99</span>
+                        <strong id="oferta-preco-final">por R$ 79,99</strong>
+                    </div>
+                    <button id="oferta-add-btn" class="btn btn-primary btn-block">APROVEITAR OFERTA</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Barra de Pesquisa -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar no cardápio...">
+            <i class="material-icons">search</i>
+        </div>
+
+        <!-- Botões de Filtro de Categoria -->
+        <div class="filter-buttons">
+            <button class="filter-btn" data-category="all">Todos</button>
+            <button class="filter-btn active" data-category="pizza">Pizzas</button>
+            <button class="filter-btn" data-category="esfiha">Esfihas</button>
+            <button class="filter-btn" data-category="bebida">Bebidas</button>
+        </div>
+
+        <!-- Seção da Lista de Produtos -->
+        <section id="product-list" class="product-grid">
+            <!-- Os cards de produtos serão carregados aqui dinamicamente pelo JS -->
+        </section>
+    </main>
+
+    <!-- Botão Flutuante para Finalizar Pedido -->
+    <div class="finalize-order-button-container" id="finalize-order-container">
+        <a href="carrinho.html" class="btn btn-primary finalize-order-btn">
+            <i class="material-icons">shopping_cart_checkout</i>
+            <span>Finalizar Pedido</span>
+        </a>
+    </div>
+
+    <!-- Barra de Navegação Inferior Fixa -->
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item active"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i>
+            <span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="anuncie.html" class="nav-item"><i class="material-icons">campaign</i><span>Anuncie</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <!-- Modal de Permissão de Mídia -->
+    <div class="media-permission-overlay" id="media-permission-overlay">
+        <div class="media-permission-modal">
+            <img src="/img/LOGO-BORACOMER-(fdcheddar).png" alt="Logo BoraComer" class="modal-icon">
+            <h3>Uma Experiência Completa!</h3>
+            <p>Para você não perder nenhuma novidade e receber alertas sonoros sobre seu pedido, precisamos da sua permissão para tocar áudios e vídeos.</p>
+            <button id="accept-media-btn" class="btn btn-primary btn-block">Claro, vamos lá!</button>
+        </div>
+    </div>
+
+    <!-- Modal de Personalização de Produto -->
+    <div class="customization-modal-overlay" id="customization-overlay">
+        <div class="customization-modal-content">
+            <button class="close-modal-btn" id="close-customization-btn" aria-label="Fechar">&times;</button>
+            <div class="modal-product-header">
+                <img id="modal-product-img" src="" alt="Imagem do Produto">
+                <div class="modal-product-info">
+                    <h2 id="modal-product-name">Nome do Produto</h2>
+                    <p id="modal-product-ingredients">Ingredientes do produto.</p>
+                    <span class="modal-base-price">Preço base: <strong id="modal-product-base-price">R$ 0,00</strong></span>
+                </div>
+            </div>
+            <div class="modal-options-container">
+                <div id="modal-removable-options"></div>
+                <div id="modal-additional-options"></div>
+                <div class="form-group">
+                    <label for="modal-special-instructions">Observações para a cozinha?</label>
+                    <textarea id="modal-special-instructions" placeholder="Ex: bem passada, cortar para crianças, etc." maxlength="150"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="quantity-selector">
+                    <button class="quantity-btn" id="modal-decrease-qty">-</button>
+                    <span id="modal-product-qty">1</span>
+                    <button class="quantity-btn" id="modal-increase-qty">+</button>
+                </div>
+                <button id="modal-add-to-cart-btn" class="btn btn-primary btn-block">
+                    Adicionar <span id="modal-final-price">R$ 0,00</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Container para o Toast de "Adicionado ao Carrinho" -->
+    <div id="add-to-cart-toast" class="add-to-cart-toast">
+        <i class="material-icons">check_circle</i>
+        <span id="toast-message">Item adicionado ao carrinho!</span>
+    </div>
+
+    <!-- Script principal da página -->
+    <script type="module" src="/js/cardapio.js"></script>
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

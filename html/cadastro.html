@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crie sua conta na Pizzaria Moraes e peça agora mesmo.">
+    
+    <!-- Título da Página -->
+    <title>Cadastro - BoraComer</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Pré-carregamento da fonte do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="form-page">
+
+    <!-- O container principal é reutilizado da página de login para manter a consistência visual -->
+    <!-- A classe 'full-page-form' pode ser usada para ajustar estilos, como remover a margem superior negativa -->
+    <main class="login-main full-page-form">
+        <div class="login-container">
+            <h1>Crie sua conta</h1>
+            <p class="form-subtitle">É rápido e fácil. Vamos começar!</p>
+            
+            <!-- Formulário de Cadastro -->
+            <form id="cadastroForm" novalidate>
+                <!-- Campo: Nome Completo -->
+                <div class="form-group">
+                    <label for="nomeCompleto">Nome Completo</label>
+                    <input type="text" id="nomeCompleto" name="nomeCompleto" placeholder="Apenas letras e espaços" required pattern="[A-Za-zÀ-ú\s]+">
+                </div>
+
+                <!-- Campo: Telefone -->
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="+55 (xx) xxxxx-xxxx" required>
+                </div>
+
+                <!-- ======================================= -->
+                <!-- ============ NOVO CAMPO: CPF ============ -->
+                <!-- ======================================= -->
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="tel" id="cpf" name="cpf" placeholder="000.000.000-00" required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                </div>
+
+                <!-- Campo: Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+                </div>
+
+                <!-- Campo: Data de Nascimento -->
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento</label>
+                    <input type="date" id="dataNascimento" name="dataNascimento" required>
+                </div>
+
+                <!-- Campo: Senha -->
+                <div class="form-group">
+                    <label for="senha">Senha (exatos 6 dígitos numéricos)</label>
+                    <input type="password" id="senha" name="senha" placeholder="••••••" required pattern="\d{6}" maxlength="6">
+                </div>
+
+                <!-- Campo: Confirmar Senha -->
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar Senha</label>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required pattern="\d{6}" maxlength="6">
+                </div>
+
+                <!-- Mensagem de Erro (inicialmente oculta) -->
+                <p id="cadastro-error-message" class="error-message" style="display: none;"></p>
+
+                <!-- Botão de Cadastrar -->
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+            
+            <!-- Link para a página de login -->
+            <p class="form-link">
+                Já tem uma conta? <a href="login.html">Faça login</a>
+            </p>
+        </div>
+    </main>
+    
+    <!-- Conecta o script de autenticação -->
+    <!-- 'type="module"' é crucial para usar 'import' no auth.js -->
+    <script type="module" src="/js/auth.js"></script>
+
+</body>
+</html>

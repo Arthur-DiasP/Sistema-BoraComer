@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Indique amigos para a Pizzaria Moraes e ganhe R$ 10 de crédito!">
+    <title>Indique & Ganhe - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <header class="app-header-simple">
+        <h1>Indique & Ganhe</h1>
+    </header>
+
+    <main class="container">
+
+        <!-- Seção do Saldo de Crédito -->
+        <section class="credit-balance-card card">
+            <div class="credit-icon">
+                <i class="material-icons">account_balance_wallet</i>
+            </div>
+            <div class="credit-info">
+                <span>Seu Saldo de Crédito</span>
+                <strong id="credit-balance">R$ 0,00</strong>
+            </div>
+        </section>
+        
+        <!-- Seção de Compartilhamento do Link -->
+        <section class="referral-link-card card">
+            <h2>Compartilhe e Ganhe!</h2>
+            <p>Seu amigo ganha <strong>10% OFF</strong> no primeiro pedido e você ganha <strong>R$ 10 de crédito</strong> quando ele comprar. É bom pra todo mundo!</p>
+            <div class="referral-link-input-group">
+                <input type="text" id="referral-link-input" value="Gerando seu link..." readonly>
+                <button id="copy-link-btn" class="btn btn-secondary" title="Copiar Link">
+                    <i class="material-icons">content_copy</i>
+                </button>
+            </div>
+            <p id="copy-feedback" class="copy-feedback-message">Link copiado!</p>
+        </section>
+
+        <!-- Seção de Indicações Bem-sucedidas -->
+        <section class="referral-history">
+            <h3><i class="material-icons">checklist</i> Suas Indicações de Sucesso</h3>
+            <div id="referrals-list" class="referrals-list-container">
+                <!-- A lista de indicações será inserida aqui pelo JS -->
+                <p>Buscando seu histórico de indicações...</p>
+            </div>
+        </section>
+
+        <!-- Seção do Ranking "Top 3 Embaixadores" -->
+        <section class="leaderboard-section">
+            <h3><i class="material-icons">leaderboard</i> Top 3 Embaixadores</h3>
+            <div id="leaderboard-list">
+                <!-- O ranking será inserido aqui pelo JS -->
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i><span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="parceiros.html" class="nav-item"><i class="material-icons">storefront</i><span>Parceiros</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item active"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <script type="module" src="/js/indicacao.js"></script>
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

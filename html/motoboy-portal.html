@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Entregas - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/motoboy-portal.css"> 
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- CSS do Plugin de Roteirização -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="app-page motoboy-portal-page">
+
+    <header class="motoboy-header">
+        <div class="header-content">
+            <h1>Portal do Entregador</h1>
+            <span id="motoboy-name">Carregando...</span>
+        </div>
+        <button id="logout-btn" class="logout-button" title="Sair"><i class="material-icons">logout</i></button>
+    </header>
+
+    <main class="container">
+
+        <!-- Carrossel de Anúncios (Banners) -->
+        <div id="banner-slider-container" class="banner-slider" style="display: none; margin-bottom: 2rem;">
+            <div class="banner-slides">
+                <!-- Slides serão inseridos aqui dinamicamente pelo JS -->
+            </div>
+            <div class="banner-dots">
+                <!-- Pontos de navegação serão inseridos aqui -->
+            </div>
+            <div class="banner-progress-bar"></div>
+        </div>
+
+        <!-- DASHBOARD DE PERFORMANCE -->
+        <section class="motoboy-dashboard">
+            <div class="stat-card"> <strong id="deliveries-today">0</strong> <span>Entregas Hoje</span> </div>
+            <div class="stat-card"> <strong id="deliveries-pending">0</strong> <span>Falta Entregar</span> </div>
+            <div class="stat-card"> <strong id="deliveries-completed-today">0</strong> <span>Concluídas (hoje)</span> </div>
+        </section>
+
+        <!-- SEÇÃO DE NOTÍCIAS E AVISOS -->
+        <section id="notices-section" style="display: none;">
+            <h2 class="section-title">Notícias e Avisos</h2>
+            <div id="notices-list"></div>
+        </section>
+
+        <!-- MAPA DE ENTREGAS EM TEMPO REAL -->
+        <div id="delivery-map-container">
+            <p>Carregando mapa e localização...</p>
+        </div>
+
+        <!-- SEÇÃO DE PARCERIA (EX: SEGURADORA) -->
+        <section id="partnership-section" class="partnership-card" style="display: none;">
+            <a href="#" id="partnership-link" target="_blank">
+                <img id="partnership-banner" src="" alt="Banner de Parceria">
+            </a>
+        </section>
+        <!-- LISTA DE ENTREGAS A FAZER -->
+        <h2 id="pending-deliveries-title">Entregas a Fazer</h2>
+        <div id="deliveries-list">
+            <p>Buscando entregas...</p>
+        </div>
+        
+        <!-- HISTÓRICO DE ENTREGAS (ACORDEÃO) -->
+        <section class="history-accordion">
+            <div class="history-header">
+                <h2>Histórico de Entregas</h2>
+                <i class="material-icons toggle-icon">expand_more</i>
+            </div>
+            <div class="history-content">
+                <select id="month-filter"></select>
+                <div class="history-summary-grid">
+                    <div class="summary-box">
+                        <p>Total de Entregas</p>
+                        <strong id="history-total-deliveries">0</strong>
+                    </div>
+                    <div class="summary-box">
+                        <p>Ganhos Estimados</p>
+                        <strong id="history-total-earnings">R$ 0,00</strong>
+                    </div>
+                </div>
+                <h4>Desempenho Diário</h4>
+                <div id="daily-chart-container">
+                    <canvas id="daily-performance-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE FINALIZAÇÃO DE ENTREGA -->
+    <div class="payment-modal-overlay" id="finalize-delivery-modal">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-finalize-modal-btn">&times;</button>
+            <h2>Finalizar Entrega</h2>
+            <p>Confirme como o cliente pagou o valor de <strong id="modal-total-value">R$ 0,00</strong>.</p>
+            <div class="payment-options-grid" id="final-payment-options">
+                <label> <input type="radio" name="final-payment-method" value="Dinheiro"> <div class="payment-option-card"><i class="material-icons">payments</i><span>Dinheiro</span></div> </label>
+                <label> <input type="radio" name="final-payment-method" value="Cartão de Crédito"> <div class="payment-option-card"><i class="material-icons">payment</i><span>Crédito</span></div> </label>
+                <label> <input type="radio" name="final-payment-method" value="Cartão de Débito"> <div class="payment-option-card"><i class="material-icons">credit_card</i><span>Débito</span></div> </label>
+                <label> <input type="radio" name="final-payment-method" value="Pix (maquininha)"> <div class="payment-option-card"><i class="material-icons">pix</i><span>Pix Maquininha</span></div> </label>
+            </div>
+            <button id="confirm-final-payment-btn" class="btn btn-primary btn-block" disabled>Confirmar Recebimento</button>
+        </div>
+    </div>
+    
+    <!-- MODAL PARA ABRIR EM APPS EXTERNOS (Waze/Google) -->
+    <div class="modal-overlay" id="maps-modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal-btn" id="close-maps-modal-btn">&times;</button>
+            <h2>Abrir Rota Externa</h2>
+            <p id="maps-modal-address">Carregando endereço...</p>
+            <div class="maps-links">
+                 <a href="#" id="google-maps-link" target="_blank" class="map-link-card">
+                     <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_(2020).svg" alt="Google Maps">
+                     <span>Google Maps</span>
+                 </a>
+                <a href="#" id="waze-link" target="_blank" class="map-link-card">
+                    <img src="https://cdn-1.webcatalog.io/catalog/waze/waze-icon-256.png" alt="Waze">
+                    <span>Waze</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL PARA VISUALIZAR A ROTA NO MAPA -->
+    <div class="modal-overlay" id="route-map-modal">
+        <div class="modal-content route-modal">
+            <button class="close-modal-btn" id="close-route-map-btn">&times;</button>
+            <h2>Rota para o Cliente</h2>
+            <div id="route-map"></div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- ============ BARRA DE NAVEGAÇÃO ============= -->
+    <!-- ============================================= -->
+    <nav class="bottom-nav">
+        <a href="motoboy-portal.html" class="nav-item active">
+            <i class="material-icons">motorcycle</i>
+            <span>Principal</span>
+        </a>
+        <a href="motoboy-bonus.html" class="nav-item">
+            <i class="material-icons">emoji_events</i>
+            <span>Bônus</span>
+        </a>
+        <a href="motoboy-perfil.html" class="nav-item">
+            <i class="material-icons">person</i>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- JS do Plugin de Roteirização -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Chart.js para o gráfico de histórico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script type="module" src="/js/motoboy-portal.js"></script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Painel de Administração da Pizzaria Moraes.">
+    <title>Dashboard - BoraComer</title>
+    
+    <!-- Ícone e Estilos -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    
+    <!-- Fontes e Ícones -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Importação da fonte 'Righteous' para o logo -->
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+
+    <!-- Biblioteca de Gráficos Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- ==================== MENU LATERAL (SIDEBAR) ==================== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/img/LOGO-BORACOMER-(fdcheddar).png" alt="Logo BoraComer" class="sidebar-logo">
+                <h3>
+                    <span class="logo-pizzaria">Bora</span> <span class="logo-moraes">Comer</span>
+                </h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-target="inicio"><i class="material-icons">dashboard</i><span>Início</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="cardapio"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="personalizacoes"><i class="material-icons">tune</i><span>Personalizações</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="estoque"><i class="material-icons">inventory_2</i><span>Estoque</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="ofertas"><i class="material-icons">local_offer</i><span>Ofertas</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="pedidos"><i class="material-icons">receipt_long</i><span>Pedidos</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="entregadores"><i class="material-icons">delivery_dining</i><span>Entregadores</span></a></li>
+                    
+                    <li class="nav-divider"><span>Marketing</span></li>
+                    <li><a href="#" class="nav-link" data-target="anuncios"><i class="material-icons">campaign</i><span>Anúncios (Banners)</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="avisos"><i class="material-icons">feed</i><span>Notícias e Avisos</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="cupons-promocionais"><i class="material-icons">sell</i><span>Cupons Promocionais</span></a></li>
+
+                    <li class="nav-divider"><span>Monetização</span></li>
+                    <li><a href="#" class="nav-link" data-target="parceiros"><i class="material-icons">storefront</i><span>Anunciantes</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="jogo"><i class="material-icons">sports_esports</i><span>Jogo Premiado</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="indicacoes"><i class="material-icons">group_add</i><span>Indicações</span></a></li>
+                    
+                    <li class="nav-divider"><span>Configurações</span></li>
+                    <li><a href="#" class="nav-link" data-target="logistica"><i class="material-icons">local_shipping</i><span>Logística</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="calendario"><i class="material-icons">calendar_today</i><span>Calendário</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/index.html" id="logout-btn" class="nav-link"><i class="material-icons">logout</i><span>Sair</span></a>
+            </div>
+        </aside>
+
+        <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1 id="main-content-title">Início</h1>
+                <button id="mobile-menu-toggle" class="mobile-menu-btn"><i class="material-icons">menu</i></button>
+            </header>
+            
+            <!-- ====== Seção Início (Dashboard Overview) ====== -->
+            <section id="section-inicio" class="content-section active">
+                <div class="summary-grid">
+                    <div class="summary-card" id="card-faturamento-dia"><i class="material-icons icon-money">paid</i><div class="summary-text"><h4>Faturamento do Dia</h4><strong id="faturamento-dia">R$ 0,00</strong></div></div>
+                    <div class="summary-card" id="card-pedidos-hoje" style="cursor: pointer;" title="Ver todos os pedidos"><i class="material-icons icon-orders">shopping_cart</i><div class="summary-text"><h4>Pedidos Hoje</h4><strong id="pedidos-hoje">0</strong></div></div>
+                    <div class="summary-card" id="card-faturamento-semana"><i class="material-icons icon-money">payments</i><div class="summary-text"><h4>Faturamento Semanal</h4><strong id="faturamento-semana">R$ 0,00</strong></div></div>
+                    <div class="summary-card" id="card-pedidos-semana"><i class="material-icons icon-orders">event_note</i><div class="summary-text"><h4>Pedidos da Semana</h4><strong id="pedidos-semana">0</strong></div></div>
+                    <div class="summary-card" id="card-total-clientes" style="cursor: pointer;" title="Gerenciar Clientes"><i class="material-icons icon-users">group</i><div class="summary-text"><h4>Total de Clientes</h4><strong id="total-clientes">0</strong></div></div>
+                </div>
+                <!-- NOVO: Card de Alertas de Estoque Baixo -->
+                <div id="low-stock-alert-card" class="card alert-card" style="display: none;">
+                    <div class="alert-header">
+                        <i class="material-icons">warning</i>
+                        <h3>Alerta de Estoque Baixo</h3>
+                    </div>
+                    <ul id="low-stock-list"></ul>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-container card"><h3>Faturamento Mensal (Ano Atual)</h3><canvas id="monthlyRevenueChart"></canvas></div>
+                    <div class="chart-container card"><div class="chart-header"><h3>Formas de Pagamento</h3><select id="month-selector" class="form-control-sm"></select></div><canvas id="paymentMethodsChart"></canvas></div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Gerenciamento de Cardápio ====== -->
+            <section id="section-cardapio" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="form-title">Adicionar Novo Produto</h2>
+                        <form id="product-form">
+                            <input type="hidden" id="product-id">
+                            <div class="form-group"><label for="product-image">URL da Imagem</label><input type="url" id="product-image" placeholder="https://exemplo.com/imagem.png" required></div>
+                            <div class="form-group"><label for="product-name">Nome do Produto</label><input type="text" id="product-name" placeholder="Ex: Pizza Calabresa" required></div>
+                            <div class="form-group" id="product-ingredients-group"><label for="product-ingredients">Ingredientes (Descrição)</label><input type="text" id="product-ingredients" placeholder="Mussarela, calabresa, cebola..."></div>
+                            <div class="form-group"><label for="product-category">Categoria</label><select id="product-category" required><option value="" disabled selected>Selecione</option><option value="pizza">Pizza</option><option value="esfiha">Esfiha</option><option value="bebida">Bebida</option></select></div>
+                            <div class="form-group"><label for="product-price">Valor (R$)</label><input type="number" step="0.01" id="product-price" placeholder="45.50" required></div>
+                            
+                            <!-- NOVO: Seção de Receita -->
+                            <div id="recipe-section" class="form-group" style="display: none;">
+                                <label>Receita (Componentes do Estoque)</label>
+                                <div id="recipe-items-container"></div>
+                                <button type="button" id="add-recipe-item-btn" class="btn btn-sm btn-secondary-outline">Adicionar Ingrediente</button>
+                            </div>
+
+                            <!-- NOVO: Checkbox para Cardápio Secreto -->
+                            <div class="form-group-checkbox">
+                                <input type="checkbox" id="product-is-secret">
+                                <label for="product-is-secret">Item do Cardápio Secreto (apenas para clientes VIP)</label>
+                            </div>
+                            
+                            <div class="form-actions"><button type="submit" class="btn btn-primary">Salvar</button><button type="button" id="clear-form-btn" class="btn btn-secondary">Cancelar</button></div>
+                        </form>
+                    </div>
+                    <div class="product-list-container card">
+                        <div class="list-header"><h2>Meus Produtos</h2><div class="view-switcher"><button class="view-btn active" data-view="grid"><i class="material-icons">grid_view</i> Grid</button><button class="view-btn" data-view="table"><i class="material-icons">table_rows</i> Planilha</button></div></div>
+                        <div class="view-container active" id="grid-view-container"><div class="filter-buttons" id="grid-filters"><button class="filter-btn active" data-category="all">Todos</button><button class="filter-btn" data-category="pizza">Pizzas</button><button class="filter-btn" data-category="esfiha">Esfihas</button><button class="filter-btn" data-category="bebida">Bebidas</button></div><div id="product-list-items" class="product-grid-admin"></div></div>
+                        <div class="view-container" id="table-view-container">
+                            <div class="table-rotation-hint" id="table-rotation-hint"><i class="material-icons">screen_rotation</i><span>Para uma melhor visualização, vire o celular na horizontal.</span></div>
+                            <div class="table-controls"><div class="search-bar-table"><input type="text" id="table-search-input" placeholder="Pesquisar por nome..."><i class="material-icons">search</i></div><div class="filter-buttons" id="table-filters"><button class="filter-btn active" data-category="all">Todos</button><button class="filter-btn" data-category="pizza">Pizzas</button><button class="filter-btn" data-category="esfiha">Esfihas</button><button class="filter-btn" data-category="bebida">Bebidas</button></div></div>
+                            <div class="table-wrapper"><table class="product-table"><thead><tr><th>Nome do Produto</th><th>Categoria</th><th>Preço</th><th>Ações</th></tr></thead><tbody id="product-table-body"></tbody></table></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Gerenciamento de Personalizações ====== -->
+            <section id="section-personalizacoes" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="personalizacao-form-title">Adicionar Nova Opção</h2>
+                        <form id="personalizacao-form"><input type="hidden" id="personalizacao-id"><div class="form-group"><label for="personalizacao-name">Nome da Opção</label><input type="text" id="personalizacao-name" placeholder="Ex: Borda com Catupiry" required></div><div class="form-group"><label for="personalizacao-price">Valor Adicional (R$)</label><input type="number" step="0.01" id="personalizacao-price" placeholder="8.00 (deixe 0 se for grátis)" required></div><div class="form-group"><label>Aplicar Globalmente (Opcional)</label><div class="checkbox-group"><label class="checkbox-label-inline"><input type="checkbox" id="aplicar-todas-pizzas"> Todas as Pizzas</label><label class="checkbox-label-inline"><input type="checkbox" id="aplicar-todas-esfihas"> Todas as Esfihas</label><label class="checkbox-label-inline"><input type="checkbox" id="aplicar-todos-produtos"> Todos (Pizzas e Esfihas)</label></div></div><div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Opção</button><button type="button" id="clear-personalizacao-form-btn" class="btn btn-secondary">Cancelar</button></div></form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header"><h2>Minhas Opções</h2></div>
+                        <div id="personalizacoes-list" class="table-wrapper"><table class="product-table"><thead><tr><th>Nome</th><th>Preço</th><th>Aplicações</th><th>Ações</th></tr></thead><tbody id="personalizacoes-table-body"></tbody></table></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Gerenciamento de Estoque ====== -->
+            <section id="section-estoque" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="stock-form-title">Adicionar Item ao Estoque</h2>
+                        <form id="stock-form">
+                            <input type="hidden" id="stock-item-id">
+                            <div class="form-group"><label for="stock-item-name">Nome do Insumo</label><input type="text" id="stock-item-name" placeholder="Ex: Queijo Mussarela" required></div>
+                            <div class="address-row">
+                                <div class="form-group"><label for="stock-item-quantity">Qtd. Atual</label><input type="number" step="any" id="stock-item-quantity" placeholder="20.5" required></div>
+                                <div class="form-group"><label for="stock-item-unit">Unidade</label><select id="stock-item-unit" required><option value="kg">kg</option><option value="g">g</option><option value="L">L</option><option value="ml">ml</option><option value="un">un</option></select></div>
+                            </div>
+                            <div class="form-group"><label for="stock-item-threshold">Nível de Alerta</label><input type="number" step="any" id="stock-item-threshold" placeholder="5" required><small class="form-hint">Receber alerta quando a quantidade for menor ou igual a este valor.</small></div>
+                            <div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Item</button><button type="button" id="clear-stock-form-btn" class="btn btn-secondary">Cancelar</button></div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header">
+                            <h2>Meu Estoque</h2>
+                            <button id="generate-shopping-list-btn" class="btn btn-secondary"><i class="material-icons">list_alt</i> Gerar Lista de Compras</button>
+                        </div>
+                        <div class="table-wrapper"><table class="product-table"><thead><tr><th>Insumo</th><th>Quantidade</th><th>Nível de Alerta</th><th>Status</th><th>Ações</th></tr></thead><tbody id="stock-table-body"></tbody></table></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====== Seção Gerenciamento de Anúncios ====== -->
+            <section id="section-anuncios" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="banner-form-title">Adicionar Anúncio</h2>
+                        <form id="banner-form"><input type="hidden" id="banner-id"><div class="form-group"><label for="banner-media-url">URL da Mídia (Imagem ou Vídeo)</label><input type="url" id="banner-media-url" placeholder="https://exemplo.com/imagem.png" required><small class="form-hint">Ideal: Proporção 16:7 (ex: 1280x560px)</small></div><div class="form-group"><label for="banner-link-url">Link de Redirecionamento (Opcional)</label><input type="url" id="banner-link-url" placeholder="Deixe em branco se não houver link"></div><div class="form-group"><label for="banner-media-type">Tipo de Mídia</label><select id="banner-media-type" required><option value="image" selected>Imagem</option><option value="video">Vídeo</option></select></div><div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Anúncio</button><button type="button" id="clear-banner-form-btn" class="btn btn-secondary">Cancelar</button></div></form>
+                    </div>
+                    <div class="product-list-container"><div class="list-header"><h2>Anúncios Ativos</h2></div><div id="banner-list" class="banner-list-admin"><p>Carregando anúncios...</p></div></div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Gerenciamento de Avisos para Motoboys ====== -->
+            <section id="section-avisos" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="aviso-form-title">Adicionar Novo Aviso</h2>
+                        <form id="aviso-form">
+                            <input type="hidden" id="aviso-id">
+                            <div class="form-group"><label for="aviso-title">Título do Aviso</label><input type="text" id="aviso-title" placeholder="Ex: Nova Regra de Estacionamento" required></div>
+                            <div class="form-group"><label for="aviso-content">Conteúdo do Aviso</label><textarea id="aviso-content" rows="5" placeholder="Descreva o aviso em detalhes aqui..." required></textarea></div>
+                            <div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Aviso</button><button type="button" id="clear-aviso-form-btn" class="btn btn-secondary">Cancelar</button></div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header"><h2>Avisos Ativos</h2></div>
+                        <div id="avisos-list" class="avisos-list-admin"><p>Carregando avisos...</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção: Cupons Promocionais ====== -->
+            <section id="section-cupons-promocionais" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="promo-cupom-form-title">Criar Cupom Promocional</h2>
+                        <form id="promo-cupom-form">
+                            <input type="hidden" id="promo-cupom-id">
+                            <div class="form-group">
+                                <label for="promo-cupom-code">Código do Cupom</label>
+                                <input type="text" id="promo-cupom-code" placeholder="Ex: PIZZA10" required>
+                                <small class="form-hint">Apenas letras e números. Será convertido para maiúsculas.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-type">Tipo de Desconto</label>
+                                <select id="promo-cupom-type" required>
+                                    <option value="percentage" selected>Porcentagem (%)</option>
+                                    <option value="free_shipping">Frete Grátis</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="promo-cupom-discount-group">
+                                <label for="promo-cupom-discount">Desconto (%)</label>
+                                <input type="number" id="promo-cupom-discount" min="1" max="100" placeholder="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-limit">Limite de Usos (0 para ilimitado)</label>
+                                <input type="number" id="promo-cupom-limit" min="0" value="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-expiration">Data de Validade</label>
+                                <input type="date" id="promo-cupom-expiration" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-status">Status do Cupom</label>
+                                <select id="promo-cupom-status" required>
+                                    <option value="true" selected>Ativo</option>
+                                    <option value="false">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar Cupom</button>
+                                <button type="button" id="clear-promo-cupom-form-btn" class="btn btn-secondary">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header">
+                            <h2>Meus Cupons Promocionais</h2>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Desconto</th>
+                                        <th>Usos</th>
+                                        <th>Validade</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="promo-cupons-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Gerenciamento de Ofertas ====== -->
+            <section id="section-ofertas" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="oferta-form-title">Criar Nova Oferta/Combo</h2>
+                        <form id="oferta-form">
+                            <input type="hidden" id="oferta-id">
+                            <div class="form-group"><label for="oferta-name">Nome da Oferta</label><input type="text" id="oferta-name" placeholder="Ex: Combo Família" required></div>
+                            <div class="form-group"><label for="oferta-description">Descrição Curta</label><textarea id="oferta-description" placeholder="Ex: 2 Pizzas Grandes + 1 Refri 2L" rows="3" required></textarea></div>
+                            <div class="form-group"><label for="oferta-image">URL da Imagem da Oferta</label><input type="url" id="oferta-image" placeholder="https://exemplo.com/combo.png" required></div>
+                            <div class="form-group">
+                                <label>Produtos do Combo</label>
+                                <div class="product-selection-container">
+                                    <div class="product-column">
+                                        <h4>Disponíveis <span id="available-count">(0)</span></h4>
+                                        <input type="text" id="oferta-products-search" placeholder="Pesquisar..." class="form-control-sm">
+                                        <div id="available-products-list" class="product-drag-list"></div>
+                                    </div>
+                                    <div class="product-column">
+                                        <h4>Selecionados <span id="selected-count">(0)</span></h4>
+                                        <div id="selected-products-list" class="product-drag-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="address-row"><div class="form-group"><label for="oferta-price">Preço da Oferta (R$)</label><input type="number" step="0.01" id="oferta-price" placeholder="79.90" required></div><div class="form-group"><label for="oferta-expiration">Expira em (Data e Hora)</label><input type="datetime-local" id="oferta-expiration" required></div></div>
+                            <div class="form-group"><label for="oferta-status">Status da Oferta</label><select id="oferta-status" required><option value="true" selected>Ativa</option><option value="false">Inativa</option></select></div>
+                            <div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Oferta</button><button type="button" id="clear-oferta-form-btn" class="btn btn-secondary">Cancelar</button></div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header"><h2>Minhas Ofertas</h2></div>
+                        <div class="table-wrapper"><table class="product-table"><thead><tr><th>Oferta</th><th>Preço</th><th>Expira em</th><th>Status</th><th>Ações</th></tr></thead><tbody id="ofertas-table-body"></tbody></table></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Configuração de Logística ====== -->
+            <section id="section-logistica" class="content-section">
+                <form id="logistica-config-form">
+                    <div class="logistica-grid">
+                        <!-- Módulo 1: Remuneração Base -->
+                        <div class="card">
+                            <h3>Módulo 1: Remuneração Base</h3>
+                            <div class="form-group">
+                                <label for="base-rate">Taxa Base por Entrega (R$)</label>
+                                <input type="number" step="0.01" id="base-rate" placeholder="7.50">
+                            </div>
+                            <div class="form-group">
+                                <label for="km-rate">Taxa por KM Rodado (R$)</label>
+                                <input type="number" step="0.01" id="km-rate" placeholder="1.50">
+                            </div>
+                            <div class="form-group">
+                                <label for="daily-rate">Diária de "Encoste" (R$)</label>
+                                <input type="number" step="0.01" id="daily-rate" placeholder="Valor fixo por dia/turno">
+                            </div>
+                            <div class="form-group">
+                                <label for="tip-forwarding">Repasse de Gorjeta</label>
+                                <select id="tip-forwarding">
+                                    <option value="100">100% para o Motoboy</option>
+                                    <option value="0">0% para o Motoboy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Módulo 2: Bônus de Performance -->
+                        <div class="card">
+                            <h3>Módulo 2: Bônus de Performance</h3>
+                            <div class="form-group">
+                                <label>Horário de Pico</label>
+                                <div class="address-row">
+                                    <input type="time" id="peak-start">
+                                    <span>até</span>
+                                    <input type="time" id="peak-end">
+                                </div>
+                                <div class="checkbox-group horizontal">
+                                    <label><input type="checkbox" name="peak-day" value="Dom"> D</label>
+                                    <label><input type="checkbox" name="peak-day" value="Seg"> S</label>
+                                    <label><input type="checkbox" name="peak-day" value="Ter"> T</label>
+                                    <label><input type="checkbox" name="peak-day" value="Qua"> Q</label>
+                                    <label><input type="checkbox" name="peak-day" value="Qui"> Q</label>
+                                    <label><input type="checkbox" name="peak-day" value="Sex"> S</label>
+                                    <label><input type="checkbox" name="peak-day" value="Sab"> S</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="peak-bonus">Bônus por Entrega no Pico (R$)</label>
+                                <input type="number" step="0.01" id="peak-bonus" placeholder="2.00">
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="fast-delivery-threshold">Prêmio Entrega Rápida (Abaixo de X minutos)</label>
+                                <input type="number" id="fast-delivery-threshold" placeholder="Ex: 25">
+                            </div>
+                            <div class="form-group">
+                                <label for="fast-delivery-bonus">Bônus por Entrega Rápida (R$)</label>
+                                <input type="number" step="0.01" id="fast-delivery-bonus" placeholder="3.00">
+                            </div>
+                        </div>
+
+                        <!-- Módulo 3: Motoboy Embaixador -->
+                        <div class="card">
+                            <h3>Módulo 3: Motoboy Embaixador</h3>
+                            <div class="form-group">
+                                <label for="ambassador-commission">Comissão por Uso do Código (R$)</label>
+                                <input type="number" step="0.01" id="ambassador-commission" placeholder="1.00">
+                            </div>
+                        </div>
+
+                        <!-- Módulo 4: Seguradora -->
+                        <div class="card">
+                            <h3>Módulo 4: Parceria Seguradora</h3>
+                            <div class="form-group">
+                                <label for="insurance-status">Status da Parceria</label>
+                                <select id="insurance-status">
+                                    <option value="active">Ativa</option>
+                                    <option value="inactive">Inativa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="insurance-banner-url">URL do Banner/Imagem</label>
+                                <input type="url" id="insurance-banner-url" placeholder="https://exemplo.com/seguro.png">
+                            </div>
+                            <div class="form-group">
+                                <label for="insurance-text">Texto da Chamada</label>
+                                <input type="text" id="insurance-text" placeholder="Faça seu seguro com desconto!">
+                            </div>
+                            <div class="form-group">
+                                <label for="insurance-link">Link de Redirecionamento</label>
+                                <input type="url" id="insurance-link" placeholder="https://seguradora.com/parceria">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions-sticky">
+                        <button type="submit" class="btn btn-primary">Salvar Todas as Configurações</button>
+                    </div>
+                </form>
+
+                <!-- Relatórios de Logística -->
+                <div class="logistica-reports-grid">
+                    <div class="card">
+                        <h3>Relatório de Motoboys Embaixadores</h3>
+                        <div class="table-wrapper">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Motoboy</th>
+                                        <th>Códigos Usados</th>
+                                        <th>Bônus Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="motoboy-embaixador-report-body">
+                                    <!-- Conteúdo gerado via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Relatório Individual de Ganhos</h3>
+                        <div class="form-group">
+                            <label for="report-motoboy-select">Selecione o Entregador</label>
+                            <select id="report-motoboy-select" class="form-control"></select>
+                        </div>
+                        <div id="motoboy-individual-report">
+                            <p>Selecione um entregador para ver seu histórico detalhado.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Calendário ====== -->
+            <section id="section-calendario" class="content-section">
+                <div class="calendar-view-container">
+                    <div class="calendar-container card"><div class="calendar-header"><button id="prev-month-btn" class="calendar-nav-btn"><i class="material-icons">chevron_left</i></button><h2 id="month-year-display">Carregando...</h2><button id="next-month-btn" class="calendar-nav-btn"><i class="material-icons">chevron_right</i></button></div><div class="calendar-weekdays"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div><div id="calendar-days-grid" class="calendar-days"></div></div>
+                    <div id="calendar-info-panel" class="card"><h3>Resumo do Dia</h3><p id="selected-date-info">Selecione um dia no calendário.</p><div id="daily-stats" style="display: none;"><div class="stat-item"><span>Total de Pedidos</span><strong id="pizzas-sold-count">0</strong></div><div class="stat-item"><span>Faturamento Total</span><strong id="daily-revenue">R$ 0,00</strong></div></div></div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Pedidos ====== -->
+            <section id="section-pedidos" class="content-section">
+                <div class="list-header"><h2>Histórico de Pedidos</h2><div class="filter-buttons" id="pedidos-filter-buttons"><button class="filter-btn active" data-status="todos">Todos</button><button class="filter-btn" data-status="Pagamento Pendente">Pendentes</button><button class="filter-btn" data-status="Concluído">Concluídos</button><button class="filter-btn" data-status="Cancelado">Cancelados</button></div></div>
+                <div id="all-orders-list" class="card"><p>Carregando histórico de pedidos...</p></div>
+            </section>
+            
+            <!-- ====== Seção para Gerenciar Entregadores ====== -->
+            <section id="section-entregadores" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="motoboy-form-title">Adicionar Entregador</h2>
+                        <form id="motoboy-form">
+                            <input type="hidden" id="motoboy-id">
+                            <div class="form-group">
+                                <label for="motoboy-name">Nome Completo</label>
+                                <input type="text" id="motoboy-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="motoboy-email">E-mail (para login)</label>
+                                <input type="email" id="motoboy-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="motoboy-phone">Telefone</label>
+                                <input type="tel" id="motoboy-phone" required>
+                            </div>
+                             <div class="form-group">
+                                <label for="motoboy-password">Senha (código numérico)</label>
+                                <input type="password" id="motoboy-password" inputmode="numeric" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                <button type="button" id="clear-motoboy-form-btn" class="btn btn-secondary">Cancelar</button>
+                            </div>
+                        </form>
+                    </form>
+                    <div class="product-list-container">
+                        <div class="list-header"><h2>Meus Entregadores</h2></div>
+                        <div class="table-wrapper">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Telefone</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="motoboys-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Anunciantes Locais ====== -->
+            <section id="section-parceiros" class="content-section">
+                <div class="card">
+                    <h2>Gerenciar Anunciantes</h2>
+                    <p>Aprove, pause ou reprove as campanhas enviadas pelos parceiros locais.</p>
+                    <div class="table-wrapper" style="margin-top: 1.5rem;">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Anunciante</th>
+                                    <th>Orçamento / Duração</th>
+                                    <th>Status</th>
+                                    <th>Expira em</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advertisers-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====== Seção Jogo Premiado ====== -->
+            <section id="section-jogo" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="game-campaign-form-title">Criar Campanha de Jogo</h2>
+                        <form id="game-campaign-form">
+                            <input type="hidden" id="game-campaign-id">
+                            <div class="form-group">
+                                <label for="game-campaign-name">Nome da Campanha</label>
+                                <input type="text" id="game-campaign-name" placeholder="Ex: Sorteio do Fim de Semana" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="game-campaign-prize">Descrição do Prêmio</label>
+                                <input type="text" id="game-campaign-prize" placeholder="Ex: 1 Combo Família (Pizza G + Refri 2L)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="game-campaign-cost">Custo para Jogar (R$)</label>
+                                <input type="number" step="0.01" id="game-campaign-cost" placeholder="Deixe 0 para ser grátis" required>
+                            </div>
+                            <div class="address-row">
+                                <div class="form-group">
+                                    <label for="game-campaign-start">Início da Campanha</label>
+                                    <input type="datetime-local" id="game-campaign-start" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="game-campaign-end">Fim da Campanha</label>
+                                    <input type="datetime-local" id="game-campaign-end" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="game-campaign-status">Status</label>
+                                <select id="game-campaign-status" required>
+                                    <option value="true" selected>Ativa</option>
+                                    <option value="false">Inativa</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar Campanha</button>
+                                <button type="button" id="clear-game-campaign-form-btn" class="btn btn-secondary">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header"><h2>Minhas Campanhas de Jogo</h2></div>
+                        <div class="table-wrapper">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Campanha</th>
+                                        <th>Período</th>
+                                        <th>Prêmio</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="game-campaigns-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Indicações ====== -->
+            <section id="section-indicacoes" class="content-section">
+                 <div class="card">
+                    <h2>Leaderboard de Embaixadores</h2>
+                    <p>Monitore os clientes que mais trazem novos usuários para a pizzaria.</p>
+                    <div class="table-wrapper" style="margin-top: 1.5rem;">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Cliente</th>
+                                    <th>Nível</th>
+                                    <th>Indicações de Sucesso</th>
+                                    <th>Crédito Total Gerado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referrals-table-body">
+                                <tr><td colspan="5">Buscando dados...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================= -->
+            <!-- ================ MODAIS ===================== -->
+            <!-- ============================================= -->
+
+            <!-- Modal de Gerenciamento de Clientes -->
+            <div class="modal-overlay" id="clients-modal-overlay">
+                <div class="modal-content large" id="clients-modal-content">
+                    <button class="close-modal-btn" id="close-clients-modal-btn" aria-label="Fechar">&times;</button>
+                    <div id="clients-list-container"><h2>Gerenciar Clientes</h2><div id="clients-list" class="clients-list-wrapper"><p>Carregando clientes...</p></div></div>
+                    <div id="client-edit-form-container" style="display: none;">
+                        <h3>Editar Cliente</h3>
+                        <form id="client-edit-form"><input type="hidden" id="edit-client-id"><div class="form-group"><label for="edit-nome">Nome Completo</label><input type="text" id="edit-nome" required></div><div class="form-group"><label for="edit-email">Email (não pode ser alterado)</label><input type="email" id="edit-email" readonly disabled></div><div class="form-group"><label for="edit-telefone">Telefone</label><input type="tel" id="edit-telefone" required></div><div class="form-group"><label for="edit-cpf">CPF</label><input type="text" id="edit-cpf" required></div><div class="form-group"><label for="edit-nascimento">Data de Nascimento</label><input type="date" id="edit-nascimento" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Alterações</button><button type="button" id="cancel-edit-btn" class="btn btn-secondary">Cancelar</button></div></form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para designar entregador -->
+            <div class="modal-overlay" id="assign-motoboy-modal">
+                <div class="modal-content">
+                    <button class="close-modal-btn" id="close-assign-modal-btn">&times;</button>
+                    <h2>Designar Entregador</h2>
+                    <p>Selecione um entregador para este pedido.</p>
+                    <div class="form-group">
+                        <label for="motoboy-select">Entregadores Disponíveis</label>
+                        <select id="motoboy-select" class="form-control"></select>
+                    </div>
+                    <button id="confirm-assign-btn" class="btn btn-primary btn-block">Designar Pedido</button>
+                </div>
+            </div>
+            
+            <!-- Modal para visualizar participantes e sortear (Jogo) -->
+            <div class="modal-overlay" id="participants-modal-overlay">
+                <div class="modal-content large">
+                    <button class="close-modal-btn" id="close-participants-modal-btn" aria-label="Fechar">&times;</button>
+                    <h2 id="participants-modal-title">Participantes da Campanha</h2>
+                    <div class="table-wrapper" style="margin-top: 1.5rem;">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome do Cliente</th>
+                                    <th>Tipo de Entrada</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participants-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="draw-section">
+                        <button id="draw-winner-btn" class="btn btn-primary" disabled>Realizar Sorteio</button>
+                        <div id="winner-display" class="winner-display-box" style="display: none;">
+                            <h4>Vencedor Sorteado!</h4>
+                            <p><strong>Nome:</strong> <span id="winner-name"></span></p>
+                            <p><strong>Cupom Gerado:</strong> <strong id="winner-coupon-code" class="winner-coupon"></strong></p>
+                            <small>Um cupom de 100% de desconto foi criado para o vencedor.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para Lista de Compras -->
+            <div class="modal-overlay" id="shopping-list-modal">
+                <div class="modal-content large">
+                    <button class="close-modal-btn" id="close-shopping-list-modal">&times;</button>
+                    <h2>Lista de Compras</h2>
+                    <p>Itens que atingiram ou estão abaixo do nível de alerta.</p>
+                    <div id="shopping-list-content" class="shopping-list-container">
+                        <!-- O conteúdo da lista será gerado pelo JS -->
+                    </div>
+                    <div class="modal-actions"><button id="print-shopping-list-btn" class="btn btn-secondary"><i class="material-icons">print</i> Imprimir Lista</button></div>
+                </div>
+            </div>
+
+            <!-- Modal para o Pop-up de Rotas -->
+            <div class="modal-overlay" id="maps-modal-overlay">
+                <div class="modal-content">
+                    <button class="close-modal-btn" id="close-maps-modal-btn" aria-label="Fechar">&times;</button>
+                    <h2>Abrir Rota</h2>
+                    <p id="maps-modal-address">Carregando endereço...</p>
+                    <div class="maps-links">
+                        <a href="#" id="google-maps-link" target="_blank" class="map-link google"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_(2020).svg" alt="Google Maps"><span>Google Maps</span></a>
+                        <a href="#" id="waze-link" target="_blank" class="map-link waze"><img src="https://cdn-1.webcatalog.io/catalog/waze/waze-icon-256.png" alt="Waze"><span>Waze</span></a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="/js/dashboard.js"></script>
+
+    <div id="persistent-notification-bar" class="notification-bar">
+        <div class="notification-icon"><i class="material-icons">shopping_cart_checkout</i></div>
+        <div class="notification-content"><h4>Novo Pedido!</h4><p id="notification-message">Um novo pedido acabou de chegar.</p></div>
+        <div class="notification-actions"><button id="view-order-btn" class="btn btn-sm btn-primary">Ver Pedidos</button><button id="notification-close-btn" class="notification-close" title="Dispensar">&times;</button></div>
+    </div>
+    <audio id="notification-sound" src="https://assets.codepen.io/296057/plink.mp3" preload="auto"></audio>
+</body>
+</html>

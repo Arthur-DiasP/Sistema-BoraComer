@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login do Entregador - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="form-page">
+    <main class="login-main full-page-form">
+        <div class="login-container">
+            <img src="/img/motoboy-icon.png" alt="Ícone de Motoboy" style="width: 80px; margin: 0 auto 1rem;">
+            <h1>Área do Entregador</h1>
+            <p class="form-subtitle">Acesse com suas credenciais.</p>
+            
+            <form id="motoboyLoginForm" novalidate>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha (código numérico)</label>
+                    <input type="password" id="senha" name="senha" inputmode="numeric" pattern="\d*" required>
+                </div>
+                <p id="login-error-message" class="error-message" style="display: none;"></p>
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+        </div>
+    </main>
+    <script type="module" src="/js/motoboy-auth.js"></script>
+</body>
+</html>

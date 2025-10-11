@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/motoboy-portal.css"> 
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="app-page motoboy-portal-page">
+
+    <header class="motoboy-header">
+        <div class="header-content">
+            <h1>Meu Perfil</h1>
+            <span id="motoboy-name">Carregando...</span>
+        </div>
+        <button id="logout-btn" class="logout-button" title="Sair"><i class="material-icons">logout</i></button>
+    </header>
+
+    <main class="container">
+        <section class="card profile-card">
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="profile-nome">Nome Completo</label>
+                    <input type="text" id="profile-nome" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">Email (não pode ser alterado)</label>
+                    <input type="email" id="profile-email" readonly disabled>
+                </div>
+                <div class="form-group">
+                    <label for="profile-telefone">Telefone</label>
+                    <input type="tel" id="profile-telefone" readonly>
+                </div>
+
+                <div id="password-fields" style="display: none;">
+                    <hr class="section-divider">
+                    <h3>Alterar Senha</h3>
+                    <div class="form-group">
+                        <label for="profile-new-password">Nova Senha (6 dígitos numéricos)</label>
+                        <input type="password" id="profile-new-password" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="Deixe em branco para não alterar">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-confirm-password">Confirmar Nova Senha</label>
+                        <input type="password" id="profile-confirm-password" inputmode="numeric" pattern="\d{6}" maxlength="6">
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button type="button" id="edit-profile-btn" class="btn btn-secondary">Editar Perfil</button>
+                    <button type="submit" id="save-profile-btn" class="btn btn-primary" style="display: none;">Salvar Alterações</button>
+                </div>
+                 <p id="profile-feedback" class="feedback-message" style="display: none;"></p>
+            </form>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="motoboy-portal.html" class="nav-item"><i class="material-icons">motorcycle</i><span>Principal</span></a>
+        <a href="motoboy-bonus.html" class="nav-item"><i class="material-icons">emoji_events</i><span>Bônus</span></a>
+        <a href="motoboy-perfil.html" class="nav-item active"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <script type="module" src="/js/motoboy-perfil.js"></script>
+</body>
+</html>

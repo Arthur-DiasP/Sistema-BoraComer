@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Finalize seu pedido na Pizzaria Moraes escolhendo a forma de pagamento.">
+    
+    <!-- Título da Página -->
+    <title>Pagamento - BoraComer</title>
+
+    <!-- Ícone e Estilos -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <!-- Cabeçalho simples da página -->
+    <header class="app-header-simple">
+        <a href="carrinho.html" class="back-button"><i class="material-icons">arrow_back</i></a>
+        <h1>Finalizar Pedido</h1>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        <!-- Resumo do Valor -->
+        <div class="payment-total-summary card">
+            <span>Valor Total do Pedido</span>
+            <strong id="total-value-display">R$ 0,00</strong>
+        </div>
+
+        <!-- Seção de Formas de Pagamento -->
+        <section class="payment-methods-section">
+            <h2>Escolha a forma de pagamento</h2>
+            <div class="payment-options-grid">
+                <!-- Opção PIX -->
+                <label>
+                    <input type="radio" name="payment-method" value="pix">
+                    <div class="payment-option-card"><i class="material-icons">pix</i><span>Pix</span></div>
+                </label>
+                <!-- Opção Cartão de Crédito -->
+                <label>
+                    <input type="radio" name="payment-method" value="credit_card">
+                    <div class="payment-option-card"><i class="material-icons">payment</i><span>Crédito</span></div>
+                </label>
+                <!-- Opção Cartão de Débito -->
+                <label>
+                    <input type="radio" name="payment-method" value="debit_card">
+                    <div class="payment-option-card"><i class="material-icons">credit_card</i><span>Débito</span></div>
+                </label>
+                <!-- Opção Dinheiro -->
+                <label>
+                    <input type="radio" name="payment-method" value="money">
+                    <div class="payment-option-card"><i class="material-icons">payments</i><span>Dinheiro</span><small>Pagar na entrega</small></div>
+                </label>
+            </div>
+        </section>
+
+        <!-- Container para o Formulário de Cartão (inicialmente oculto) -->
+        <section id="card-payment-form-container" class="payment-form-container" style="display: none;">
+            <div class="card">
+                <h3 id="card-form-title">Pagamento com Cartão</h3>
+                <form id="card-payment-form">
+                    <div class="form-group"><label for="card-number">Número do Cartão</label><input type="tel" id="card-number" placeholder="0000 0000 0000 0000" required></div>
+                    <div class="form-group"><label for="card-name">Nome no Cartão</label><input type="text" id="card-name" placeholder="Como está no cartão" required></div>
+                    <div class="address-row">
+                        <div class="form-group"><label for="card-expiry">Validade (MM/AA)</label><input type="tel" id="card-expiry" placeholder="MM/AA" required maxlength="5"></div>
+                        <div class="form-group"><label for="card-cvv">CVV</label><input type="tel" id="card-cvv" placeholder="123" required maxlength="4"></div>
+                    </div>
+                    <button type="submit" id="confirm-card-payment-btn" class="btn btn-primary btn-block">Pagar com Cartão</button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Botão Principal de Confirmação (para Pix e Dinheiro) -->
+        <div class="payment-confirm-button-container" id="main-confirm-button-container" style="display: none;">
+            <button id="main-confirm-btn" class="btn btn-primary btn-block">Confirmar Pedido</button>
+        </div>
+    </main>
+
+    <!-- MODAL PARA PAGAMENTO PIX -->
+    <div class="payment-modal-overlay" id="pix-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-pix-modal-btn" aria-label="Fechar">&times;</button>
+            <h2>Pague com Pix</h2>
+            <div class="modal-total-display"><span>Valor Total</span><strong id="pix-modal-total-value">R$ 0,00</strong></div>
+            <p class="pix-instructions">Escaneie o QR Code ou use o código abaixo:</p>
+            <div class="pix-qr-code" id="pix-qr-code-container"><div class="spinner"></div></div>
+            <div class="pix-copy-paste">
+                <input type="text" id="pix-copy-paste-code" readonly value="Gerando código...">
+                <button id="copy-pix-code-btn" title="Copiar código"><i class="material-icons">content_copy</i></button>
+            </div>
+            <div class="modal-actions">
+                <button id="payment-made-btn" class="btn btn-primary btn-block">Já fiz o pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA PAGAMENTO EM DINHEIRO -->
+    <div class="payment-modal-overlay" id="money-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-money-modal-btn" aria-label="Fechar">&times;</button>
+            <h2>Pagamento em Dinheiro</h2>
+            <div class="modal-total-display"><span>Valor a Pagar</span><strong id="money-modal-total-value">R$ 0,00</strong></div>
+            <p class="money-instructions">Para agilizar a entrega, informe o valor que você usará para pagar. Assim, o entregador já levará o troco certo!</p>
+            <div class="form-group">
+                <label for="money-amount">Valor em dinheiro (Ex: 50.00)</label>
+                <input type="number" step="0.01" id="money-amount" placeholder="R$ 0,00">
+            </div>
+            <div id="change-display" class="change-display-box" style="display: none;">
+                <span>Troco:</span>
+                <strong id="change-value">R$ 0,00</strong>
+            </div>
+            <div class="modal-actions">
+                 <button id="confirm-money-payment-btn" class="btn btn-primary btn-block" disabled>Confirmar Pedido</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CONFIRMAÇÃO FINAL -->
+    <div class="payment-modal-overlay" id="confirmation-overlay">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-header">
+                <div class="confirmation-icon"></div>
+            </div>
+            <div class="confirmation-body">
+                <h2>Pedido Recebido!</h2>
+                <p>Uhuul! Se o seu pagamento for concluído, você receberá uma notificação na página do seu perfil confirmando o seu pedido!</p>
+                <button id="close-confirmation-btn" class="btn btn-primary btn-block">Ver meus Pedidos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE FICHA GRÁTIS PARA O JOGO -->
+    <div class="payment-modal-overlay" id="free-ticket-overlay">
+        <div class="confirmation-modal-content free-ticket-modal">
+             <div class="confirmation-header">
+                <div class="confirmation-icon ticket-icon">
+                    <i class="material-icons">sports_esports</i>
+                </div>
+            </div>
+            <div class="confirmation-body">
+                <h2>Você Ganhou uma Ficha!</h2>
+                <p>Parabéns! Por seu pedido ser acima de R$ 50, você ganhou uma Ficha Grátis para concorrer no Jogo da Velha Premiado!</p>
+                <div class="free-ticket-actions">
+                    <button id="play-now-btn" class="btn btn-primary">Jogar Agora</button>
+                    <button id="play-later-btn" class="btn btn-secondary">Jogar Depois</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!--  INÍCIO DA ATUALIZAÇÃO: Nova Notificação de Erro -->
+    <!-- ============================================= -->
+    <div class="payment-error-toast" id="payment-error-toast">
+        <i class="material-icons payment-error-icon">error_outline</i>
+        <div class="payment-error-content">
+            <h4 id="payment-error-title">Ocorreu um Erro</h4>
+            <p id="payment-error-message">Não foi possível processar o pagamento.</p>
+        </div>
+        <button class="payment-error-close" id="payment-error-close-btn">&times;</button>
+    </div>
+    <!-- ============================================= -->
+    <!--  FIM DA ATUALIZAÇÃO                          -->
+    <!-- ============================================= -->
+    
+    <!-- Scripts -->
+    <script type="module" src="/js/pagamentos.js"></script>
+
+</body>
+</html>

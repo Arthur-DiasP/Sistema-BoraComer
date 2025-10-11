@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Acesse sua conta na Pizzaria Moraes.">
+    
+    <!-- Título da Página -->
+    <title>Login - BoraComer</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Pré-carregamento da fonte do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="login-page">
+
+    <!-- Cabeçalho (40vh da tela com fundo cheddar) -->
+    <header class="login-header">
+        <img src="/img/LOGO-BORACOMER-(fdcheddar).png" alt="Logo BoraComer">
+    </header>
+
+    <!-- Conteúdo Principal (60vh da tela com fundo cinza) -->
+    <main class="login-main">
+        <div class="login-container">
+            <h1>Acesse sua conta</h1>
+            
+            <!-- Formulário de Login -->
+            <form id="loginForm" novalidate>
+                <!-- Campo de Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+                </div>
+
+                <!-- Campo de Senha -->
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+                </div>
+                
+                <!-- Mensagem de Erro (inicialmente oculta) -->
+                <p id="login-error-message" class="error-message" style="display: none;"></p>
+
+                <!-- Botão de Entrar -->
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+            
+            <!-- Link para a página de cadastro -->
+            <p class="form-link">
+                Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+            </p>
+            
+            <!-- NOVO: Link para a página de redefinição de senha -->
+            <p class="form-link">
+                Esqueceu sua senha? <a href="redefinir-senha.html">Redefinir Senha</a>
+            </p>
+        </div>
+    </main>
+    
+    <!-- Conecta o script de autenticação -->
+    <!-- 'type="module"' é crucial para usar 'import' no auth.js -->
+    <script type="module" src="/js/auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Revise seu pedido na Pizzaria Moraes, informe seu endereço e prossiga para o pagamento.">
+    
+    <!-- Título da Página -->
+    <title>Meu Carrinho - BoraComer</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Link para a biblioteca de ícones do Google (Material Icons) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Pré-carregamento da fonte do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <!-- Cabeçalho simples da página -->
+    <header class="app-header-simple">
+        <h1>Meu Carrinho</h1>
+    </header>
+
+    <!-- Conteúdo Principal da Página -->
+    <main class="container">
+        
+        <!-- Container onde os itens do carrinho serão listados -->
+        <!-- O conteúdo aqui é gerado dinamicamente pelo arquivo js/carrinho.js -->
+        <div id="cart-items" class="cart-items-container">
+            <!-- Itens do carrinho são injetados aqui pelo JavaScript -->
+        </div>
+
+        <!-- Seção de Endereço de Entrega -->
+        <section class="address-section card">
+            <h2>Endereço de Entrega</h2>
+            
+            <!-- Linha 1: CEP e busca automática -->
+            <div class="address-row">
+                <div class="form-group address-cep">
+                    <label for="cep-input">CEP</label>
+                    <input type="tel" id="cep-input" placeholder="00000-000" maxlength="9" required>
+                </div>
+            </div>
+            
+            <!-- Linha 2: Rua / Logradouro (preenchido pela API) -->
+            <div class="address-row">
+                <div class="form-group address-full">
+                    <label for="rua-input">Rua / Logradouro</label>
+                    <input type="text" id="rua-input" placeholder="Preenchimento automático" required readonly>
+                </div>
+            </div>
+
+            <!-- Linha 3: Número e Bairro -->
+            <div class="address-row">
+                <div class="form-group address-numero">
+                    <label for="numero-input">Número</label>
+                    <input type="text" id="numero-input" placeholder="Nº" required>
+                </div>
+                <div class="form-group address-bairro">
+                    <label for="bairro-input">Bairro</label>
+                    <input type="text" id="bairro-input" placeholder="Preenchimento automático" required readonly>
+                </div>
+            </div>
+            
+            <!-- Linha 4: Complemento (opcional) -->
+            <div class="address-row">
+                <div class="form-group address-full">
+                    <label for="complemento-input">Complemento (opcional)</label>
+                    <input type="text" id="complemento-input" placeholder="Apto, Bloco, etc.">
+                </div>
+            </div>
+            
+            <!-- Checkbox para salvar o endereço no perfil do usuário -->
+            <div class="form-group-checkbox">
+                <input type="checkbox" id="save-address-checkbox" name="save-address">
+                <label for="save-address-checkbox">Salvar este endereço para pedidos futuros</label>
+            </div>
+
+            <!-- Caixa de informação de entrega (distância e taxa) -->
+            <div id="delivery-info" class="delivery-info-box" style="display: none;"></div>
+        </section>
+
+        <!-- Seção de resumo do pedido -->
+        <div class="cart-summary card">
+            <!-- Campo de Cupom Promocional -->
+            <div class="coupon-input-group">
+                <input type="text" id="coupon-code-input" placeholder="Possui um cupom?">
+                <button id="apply-coupon-btn" class="btn btn-secondary">Aplicar</button>
+            </div>
+            <p id="coupon-feedback" class="coupon-feedback-message"></p>
+            
+            <!-- Linhas de valores -->
+            <div class="total-line">
+                <span>Subtotal dos Itens</span>
+                <span id="subtotal">R$ 0,00</span>
+            </div>
+
+            <!-- Linha para exibir o desconto (oculta por padrão) -->
+            <div class="total-line discount" id="applied-coupon-row" style="display: none;">
+                <span>Desconto (<span id="coupon-code-display"></span>) <button id="remove-coupon-btn" class="remove-coupon-btn">Remover</button></span>
+                <span id="discount-amount">- R$ 0,00</span>
+            </div>
+
+            <!-- Linha para desconto de indicação -->
+            <div class="total-line discount" id="referral-discount-row" style="display: none;">
+                <span><i class="material-icons" style="font-size: 1em; vertical-align: middle;">group_add</i> Desconto de Indicação</span>
+                <span id="referral-discount-amount">- R$ 0,00</span>
+            </div>
+
+            <div class="total-line">
+                <span>Taxa de Serviço</span>
+                <span id="service-fee">R$ 1,00</span>
+            </div>
+            <div class="total-line">
+                <span>Taxa de Entrega</span>
+                <span id="delivery-fee">R$ 0,00</span>
+            </div>
+            <hr>
+            <div class="total-line grand-total">
+                <span>Total</span>
+                <span id="grand-total">R$ 1,00</span>
+            </div>
+            <p class="delivery-time">Entrega estimada: 40–60 minutos</p>
+            <button id="checkout-button" class="btn btn-primary btn-block" disabled title="Adicione itens ao carrinho e preencha o endereço para continuar.">
+                Ir para Pagamento
+            </button>
+        </div>
+    </main>
+    
+    <!-- Barra de Navegação Inferior Fixa -->
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item">
+            <i class="material-icons">restaurant_menu</i>
+            <span>Cardápio</span>
+        </a>
+        <a href="carrinho.html" class="nav-item active"><i class="material-icons">shopping_cart</i><span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="parceiros.html" class="nav-item"><i class="material-icons">storefront</i><span>Parceiros</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+    
+    <!-- Scripts -->
+    <script type="module" src="/js/carrinho.js"></script>
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>
