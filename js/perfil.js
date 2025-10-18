@@ -90,10 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadOrderHistory = () => {
         orderHistoryList.innerHTML = '<div class="loading-spinner">Carregando pedidos...</div>';
         
-        // =========================================================================
-        //  INÍCIO DA CORREÇÃO: A cláusula orderBy foi removida da consulta
-        // =========================================================================
-        const q = query(collection(firestore, 'pedidos'), where("userId", "==", userId));
+        // ATUALIZAÇÃO: A consulta agora ordena por data descendente.
+        // IMPORTANTE: O Firestore pode pedir para você criar um índice para esta consulta.
+        // Se um erro aparecer no console do navegador com um link, clique nele para criar o índice.
+        const q = query(collection(firestore, 'pedidos'), where("userId", "==", userId), orderBy("data", "desc"));
 
         onSnapshot(q, 
             (querySnapshot) => {
@@ -119,23 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // =========================================================================
-        //  INÍCIO DA CORREÇÃO: Ordenação dos resultados no lado do cliente
-        // =========================================================================
-        const orders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        orders.sort((a, b) => {
-            const dateA = a.data?.toDate() || 0;
-            const dateB = b.data?.toDate() || 0;
-            return dateB - dateA; // Ordena do mais recente para o mais antigo
-        });
-        // =========================================================================
-        //  FIM DA CORREÇÃO
-        // =========================================================================
-
         let ordersHTML = '';
         
-        orders.forEach(orderData => { // Itera sobre a lista já ordenada
+        // ATUALIZAÇÃO: Itera diretamente sobre o resultado do snapshot, que já vem ordenado.
+        querySnapshot.forEach(doc => {
+            const orderData = { id: doc.id, ...doc.data() };
             try {
                 const order = orderData;
                 const orderId = order.id;

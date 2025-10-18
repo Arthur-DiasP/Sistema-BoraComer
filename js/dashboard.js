@@ -148,8 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (change.type === "added") {
                     const pedido = change.doc.data();
                     const nomeCliente = pedido.cliente?.nome || "Novo Cliente";
-
-                    notificationMessage.textContent = `Pedido de ${nomeCliente} acaba de chegar!`;
+                    
+                    // ATUALIZAÇÃO: A mensagem agora mostra o status do pedido
+                    if (pedido.status === 'Concluído') {
+                        notificationMessage.textContent = `Novo pedido de ${nomeCliente} (Pagamento Confirmado)!`;
+                    } else {
+                        notificationMessage.textContent = `Pedido de ${nomeCliente} acaba de chegar! (Status: ${pedido.status})`;
+                    }
+                    
                     notificationBar.classList.add('visible');
 
                     // Tenta tocar o som de notificação

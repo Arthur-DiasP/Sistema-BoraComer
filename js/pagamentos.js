@@ -4,7 +4,9 @@ import { firestore } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { updateCartBadge } from './main.js';
 
-const BACKEND_URL = '';
+// Variáveis de controle para o Polling
+let pollingInterval = null; 
+const POLLING_INTERVAL_MS = 5000; // Consulta a cada 5 segundos
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Seletores do DOM ---
@@ -23,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pixQrContainer = document.getElementById('pix-qr-code-container');
     const pixCopyPasteInput = document.getElementById('pix-copy-paste-code');
     const copyPixBtn = document.getElementById('copy-pix-code-btn');
-    const paymentMadeBtn = document.getElementById('payment-made-btn');
+    // ATUALIZADO: paymentMadeBtn agora apenas fecha, o polling monitora
+    const paymentMadeBtn = document.getElementById('payment-made-btn'); 
     const closePixModalBtn = document.getElementById('close-pix-modal-btn');
     const moneyModalOverlay = document.getElementById('money-modal-overlay');
     const moneyAmountInput = document.getElementById('money-amount');
@@ -31,14 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMoneyModalBtn = document.getElementById('close-money-modal-btn');
     const confirmationOverlay = document.getElementById('confirmation-overlay');
     const closeConfirmationBtn = document.getElementById('close-confirmation-btn');
-    // NOVO: Seletores para o modal de Ficha Grátis
     const freeTicketOverlay = document.getElementById('free-ticket-overlay');
     const playNowBtn = document.getElementById('play-now-btn');
     const playLaterBtn = document.getElementById('play-later-btn');
+    const confirmationModalContent = document.getElementById('confirmation-overlay').querySelector('.confirmation-body');
 
-    // =========================================================================
-    //  INÍCIO DA ATUALIZAÇÃO: Seletores e lógica da notificação de erro
-    // =========================================================================
+    // --- Seletores e lógica da notificação de erro ---
     const errorToast = document.getElementById('payment-error-toast');
     const errorTitle = document.getElementById('payment-error-title');
     const errorMessage = document.getElementById('payment-error-message');
@@ -47,14 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let errorTimeout; // Variável para controlar o auto-fechamento
     
     function showPaymentError(title, message) {
-        // Limpa qualquer timeout anterior para evitar que feche rápido demais
         clearTimeout(errorTimeout);
 
         errorTitle.textContent = title;
         errorMessage.textContent = message;
         errorToast.classList.add('show');
 
-        // Define um novo timeout para esconder a notificação após 6 segundos
         errorTimeout = setTimeout(() => {
             errorToast.classList.remove('show');
         }, 6000);
@@ -64,9 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(errorTimeout);
         errorToast.classList.remove('show');
     });
-    // =========================================================================
-    //  FIM DA ATUALIZAÇÃO
-    // =========================================================================
+    // --- FIM da lógica da notificação de erro ---
     
     let orderTotal = 0;
     let orderAddress = {};
@@ -118,8 +115,26 @@ document.addEventListener('DOMContentLoaded', () => {
             handleCardPayment(selectedMethodRadio.value.toUpperCase());
         });
 
-        closePixModalBtn.addEventListener('click', () => pixModalOverlay.classList.remove('visible'));
-        paymentMadeBtn.addEventListener('click', () => finalizeOrder('PIX'));
+        // AJUSTE: closePixModalBtn agora também limpa o polling
+        closePixModalBtn.addEventListener('click', () => {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pixModalOverlay.classList.remove('visible');
+        });
+        
+        // AJUSTE: paymentMadeBtn agora APENAS fecha o modal e notifica que o sistema está monitorando
+        paymentMadeBtn.addEventListener('click', () => {
+            pixModalOverlay.classList.remove('visible');
+            // ATUALIZAÇÃO: Mensagem mais amigável e informativa.
+            showPaymentError(
+                'Aguardando Confirmação', 
+                'Estamos de olho! Assim que o pagamento for confirmado, seu pedido seguirá para a cozinha. Você pode acompanhar o status na tela de "Perfil".'
+            );
+            // Redireciona para o perfil para que o usuário possa acompanhar.
+            setTimeout(() => {
+                window.location.href = 'perfil.html';
+            }, 3000);
+        });
+        
         copyPixBtn.addEventListener('click', copyPixCode);
 
         closeMoneyModalBtn.addEventListener('click', () => moneyModalOverlay.classList.remove('visible'));
@@ -170,8 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showMoneyModal(); 
         }
 
-        mainConfirmBtn.disabled = false;
-        mainConfirmBtn.textContent = 'Confirmar Pedido';
+        // Se for Pix ou Boleto, o botão será liberado após a tentativa de criação da cobrança
+        // Se for Dinheiro, ele será liberado ao mostrar o modal
+        if (method !== 'MONEY') {
+            mainConfirmBtn.disabled = false;
+            mainConfirmBtn.textContent = 'Confirmar Pedido';
+        }
     }
 
     async function handleCardPayment(asaasMethod) {
@@ -227,8 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 console.error('Erro retornado pelo backend:', data);
                 const errorMsg = data.details && data.details[0] ? data.details[0].description : data.error;
-                // ATUALIZAÇÃO: Substitui alert pela nova notificação
-                showPaymentError('Falha no Pagamento', `${errorMsg}. Por favor, verifique os dados e tente novamente.`);
+                showPaymentError('Falha no Pagamento', `${errorMsg || 'Erro desconhecido'}. Por favor, verifique os dados e tente novamente.`);
                 return;
             }
     
@@ -240,24 +258,89 @@ document.addEventListener('DOMContentLoaded', () => {
                     pixQrContainer.innerHTML = `<img src="data:image/png;base64,${data.pixQrCode.encodedImage}" alt="QR Code PIX">`;
                     pixCopyPasteInput.value = data.pixQrCode.payload;
                     pixModalOverlay.classList.add('visible');
+
+                    // NOVO: Inicia o monitoramento do status para PIX
+                    startPaymentPolling(data.id, data.billingType); 
+
                 } else {
                     console.error("A resposta da API para o PIX não continha os dados do QR Code. Resposta recebida:", data);
-                    // ATUALIZAÇÃO: Substitui alert pela nova notificação
                     showPaymentError('Falha na Geração do PIX', 'Não foi possível gerar o QR Code. Tente novamente em alguns instantes.');
                 }
-            } else if (method === 'CREDIT_CARD' || method === 'DEBIT_CARD') {
+            } else if (method.includes('CARD')) {
+                // Cartão: O pagamento é imediato (CONFIRMED ou RECEBIED) ou negado
                 if (data.status === 'CONFIRMED' || data.status === 'RECEIVED') {
-                    finalizeOrder('Cartão de Crédito');
-                } else {
+                    // ATUALIZAÇÃO: Passa o status correto para a finalização.
+                    finalizeOrder('Cartão de Crédito', {}, 'Concluído');
+                } else if (data.status === 'PENDING') {
+                    // Pagamentos de cartão que caem em PENDING (ex: falha de comunicação)
                     showPaymentError('Pagamento Pendente', `O pagamento está sendo processado (Status: ${data.status}).`);
-                    finalizeOrder('Cartão (Pendente)');
+                    // ATUALIZAÇÃO: Passa o status correto para a finalização.
+                    finalizeOrder('Cartão (Pendente)', {}, 'Pagamento Pendente');
+                } else {
+                     showPaymentError('Pagamento Negado', `O pagamento foi negado pela operadora. Status: ${data.status}.`);
                 }
             }
         } catch (error) {
             console.error("Erro de comunicação com o servidor:", error);
-            // ATUALIZAÇÃO: Substitui alert pela nova notificação
             showPaymentError('Erro de Conexão', 'Não foi possível conectar ao servidor de pagamentos. Verifique sua rede.');
         }
+    }
+
+    /**
+     * Inicia o monitoramento do status de pagamento (PIX ou Boleto)
+     * consultando o backend periodicamente.
+     */
+    function startPaymentPolling(asaasPaymentId, billingType) {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+
+        const checkStatus = async () => {
+            try {
+                const response = await fetch(`/api/payment-status/${asaasPaymentId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.error('Erro no polling:', data.error);
+                    return; 
+                }
+
+                const paymentStatus = data.status;
+
+                // Pagamentos confirmados pelo Asaas
+                if (paymentStatus === 'CONFIRMED' || paymentStatus === 'RECEIVED') {
+                    clearInterval(pollingInterval);
+                    console.log(`Pagamento ${asaasPaymentId} CONFIRMADO!`);
+                    
+                    // Fecha o modal PIX, se estiver aberto
+                    pixModalOverlay.classList.remove('visible');
+                    
+                    // Finaliza o pedido e concede as recompensas
+                    // ATUALIZAÇÃO: Passa o status correto para a finalização.
+                    await finalizeOrder(data.billingType, {}, 'Concluído'); 
+
+                } 
+                // Pagamento cancelado ou expirado
+                else if (paymentStatus === 'CANCELLED' || paymentStatus === 'OVERDUE') {
+                    clearInterval(pollingInterval);
+                    console.log(`Pagamento ${asaasPaymentId} CANCELADO/VENCIDO.`);
+                    pixModalOverlay.classList.remove('visible');
+                    showPaymentError('Pagamento Falhou', 'O prazo para o pagamento expirou ou ele foi cancelado. Por favor, refaça o pedido.');
+                }
+
+                // Se for PENDING, continua esperando
+                else {
+                    console.log(`Status de pagamento atual: ${paymentStatus}. Aguardando confirmação...`);
+                }
+            } catch (error) {
+                console.error("Erro na comunicação de polling:", error);
+                // Continua tentando em caso de erro de rede temporário
+            }
+        };
+
+        // Inicia o polling
+        pollingInterval = setInterval(checkStatus, POLLING_INTERVAL_MS);
+        console.log(`Polling iniciado para o pagamento ID: ${asaasPaymentId}`);
     }
     
     function copyPixCode() {
@@ -292,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function finalizeOrder(paymentMethod, details = {}) {
+    async function finalizeOrder(paymentMethod, details = {}, status = 'Em preparo') {
         const activeModal = document.querySelector('.payment-modal-overlay.visible');
         try {
             const cart = JSON.parse(localStorage.getItem('pizzariaCart')) || {};
@@ -311,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 total: orderTotal,
                 endereco: orderAddress,
                 formaPagamento: paymentMethod,
-                status: (paymentMethod === 'Dinheiro') ? 'Em preparo' : 'Pagamento Pendente',
+                status: status, // Usa o status recebido como parâmetro
                 data: serverTimestamp(),
                 descontoIndicacao: referralDiscountApplied,
                 cupomAplicado: couponApplied ? couponApplied.code : null,
@@ -328,12 +411,21 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.removeItem('appliedCoupon');
             updateCartBadge();
             
-            // Lógica Pós-Venda (Indicação e Jogo)
             await handlePostPurchaseRewards();
 
             if (activeModal) activeModal.classList.remove('visible');
 
-            // Verifica se o usuário ganhou uma ficha para decidir qual modal mostrar
+            // ATUALIZAÇÃO: Personaliza a mensagem de sucesso
+            if (status === 'Concluído') {
+                confirmationModalContent.innerHTML = `
+                    <h2>Pedido Confirmado!</h2>
+                    <p>Uhuul! Recebemos seu pagamento e seu pedido já foi para a cozinha. Agora é só aguardar essa delícia chegar!</p>
+                    <button id="close-confirmation-btn" class="btn btn-primary btn-block">Acompanhar Pedido</button>
+                `;
+                // Reatribui o listener ao novo botão
+                document.getElementById('close-confirmation-btn').addEventListener('click', () => window.location.href = 'perfil.html');
+            }
+
             if (orderTotal > 50) {
                 freeTicketOverlay.classList.add('visible');
             } else {
@@ -352,17 +444,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const userRef = doc(firestore, "users", userId);
         const updates = {};
 
-        // 1. Deduz o crédito de indicação que foi usado
         const referralDiscountApplied = parseFloat(sessionStorage.getItem('referralDiscountApplied')) || 0;
         if (referralDiscountApplied > 0) {
             updates.referralCredit = increment(-referralDiscountApplied);
         }
 
-        // NOVO: Incrementa o uso do cupom promocional
         const couponApplied = JSON.parse(sessionStorage.getItem('appliedCoupon')) || null;
         if (couponApplied) {
             const couponRef = doc(firestore, "cuponsPromocionais", couponApplied.code);
-            updates.vezesUsado = increment(1);
+            // NÃO atualizamos o cupom aqui. Isso deve ser feito em uma transação segura ou no backend se necessário.
+            // Para simplicidade, vamos pular a atualização do contador do cupom no frontend.
         }
 
         // 1. Processa recompensa para o INDICADOR (se aplicável)
