@@ -7,6 +7,20 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// ==========================================================
+// 🎯 MUDANÇA 1: BLOCO PARA SILENCIAR LOGS EM PRODUÇÃO (RENDER)
+// ==========================================================
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+    // Sobrescreve console.log e console.info para que não façam nada em produção.
+    // MANTEMOS console.error ativo para ver erros críticos.
+    console.log = function() {};
+    console.info = function() {};
+    console.debug = function() {};
+}
+// ==========================================================
+
 // ===== Corrige __dirname em ESModules =====
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,13 +31,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ===== Middlewares =====
-// Nota: Para webhooks, o body-parser precisa ser configurado antes da rota
+// ===== Middlewares (sem alterações) =====
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// ===== Servir arquivos estáticos (index.html, css/, js/, img/, etc.) =====
+// ===== Servir arquivos estáticos (sem alterações) =====
 app.use(express.static(__dirname));
 
 // ========================
@@ -52,7 +65,7 @@ const asaasAPI = async (endpoint, method = 'GET', body = null) => {
 };
 
 // ========================
-// ROTA DA API: criar pagamento
+// ROTA DA API: criar pagamento (LOGS REMOVIDOS/CONDICIONADOS)
 // ========================
 app.post('/api/create-payment', async (req, res) => {
     try {
@@ -135,7 +148,8 @@ app.post('/api/create-payment', async (req, res) => {
         const paymentResponse = await asaasAPI('/payments', 'POST', paymentPayload);
         const paymentData = await paymentResponse.json();
 
-        console.log('RESPOSTA INICIAL DA CRIAÇÃO:', JSON.stringify(paymentData, null, 2));
+        // 🎯 MUDANÇA 2: REMOVE OU CONDICIONA LOG DE RESPOSTA DETALHADA
+        // console.log('RESPOSTA INICIAL DA CRIAÇÃO:', JSON.stringify(paymentData, null, 2)); 
 
         if (!paymentResponse.ok) {
             console.error('Erro da API Asaas ao criar pagamento:', paymentData);
@@ -144,11 +158,13 @@ app.post('/api/create-payment', async (req, res) => {
 
         // 6) Se for PIX, buscar QR Code extra
         if (paymentData.billingType === 'PIX' && paymentData.id) {
-            console.log(`Pagamento PIX criado com ID: ${paymentData.id}. Buscando QR Code...`);
+            // 🎯 MUDANÇA 3: REMOVE OU CONDICIONA LOG DE BUSCA
+            // console.log(`Pagamento PIX criado com ID: ${paymentData.id}. Buscando QR Code...`); 
             const getQrCodeResponse = await asaasAPI(`/payments/${paymentData.id}/pixQrCode`);
             const qrCodeData = await getQrCodeResponse.json();
 
-            console.log('RESPOSTA DA BUSCA PELO QR CODE:', JSON.stringify(qrCodeData, null, 2));
+            // 🎯 MUDANÇA 4: REMOVE OU CONDICIONA LOG DE RESPOSTA QR CODE
+            // console.log('RESPOSTA DA BUSCA PELO QR CODE:', JSON.stringify(qrCodeData, null, 2)); 
 
             if (!getQrCodeResponse.ok) {
                 return res.status(400).json({ error: 'Pagamento criado, mas falha ao obter QR Code', details: qrCodeData.errors || qrCodeData });
@@ -168,7 +184,7 @@ app.post('/api/create-payment', async (req, res) => {
 });
 
 // ========================
-// ROTA DA API: Consultar Status do Pagamento (Para Polling do Frontend)
+// ROTA DA API: Consultar Status do Pagamento (sem alterações)
 // ========================
 app.get('/api/payment-status/:id', async (req, res) => {
     try {
@@ -185,7 +201,6 @@ app.get('/api/payment-status/:id', async (req, res) => {
             return res.status(response.status).json({ error: 'Falha ao buscar status do pagamento no Asaas', details: data.errors || data });
         }
 
-        // Retorna o status e outros dados relevantes para o frontend
         res.json({ status: data.status, value: data.value, billingType: data.billingType, id: data.id });
 
     } catch (error) {
@@ -195,31 +210,33 @@ app.get('/api/payment-status/:id', async (req, res) => {
 });
 
 /**
- * SIMULAÇÃO DE NOTIFICAÇÃO (Para fins de demonstração)
- * Em um sistema real, você usaria WebSockets ou um serviço de notificação
- * para enviar isso ao frontend.
+ * SIMULAÇÃO DE NOTIFICAÇÃO (sem alteração)
  */
 function simulateUserNotification(paymentId, message) {
-    console.log(`\n*** NOTIFICAÇÃO PARA O USUÁRIO (Simulação) ***`);
-    console.log(`Pagamento ID: ${paymentId}`);
-    console.log(`Mensagem: ${message}`);
-    console.log(`**********************************\n`);
+    // 🎯 MUDANÇA 5: LOGS CONDICIONAIS PARA MENSAGENS DE SIMULAÇÃO
+    if (!isProduction) { 
+        console.log(`\n*** NOTIFICAÇÃO PARA O USUÁRIO (Simulação) ***`);
+        console.log(`Pagamento ID: ${paymentId}`);
+        console.log(`Mensagem: ${message}`);
+        console.log(`**********************************\n`);
+    }
 }
 
 // ========================
-// ROTA DO WEBHOOK ASAAS (Recebe a confirmação de pagamento do Asaas)
+// ROTA DO WEBHOOK ASAAS (LOGS CONDICIONAIS)
 // ========================
 app.post('/webhook/asaas', async (req, res) => {
-    // O Asaas envia os dados da notificação no corpo da requisição
     const notification = req.body;
     const { event, payment } = notification;
 
-    // Log para fins de depuração
-    console.log(`\n--- Webhook Asaas Recebido ---`);
-    console.log(`Evento: ${event}`);
-    console.log(`ID do Pagamento: ${payment?.id || 'N/A'}`);
-    console.log(`Status do Pagamento: ${payment?.status || 'N/A'}`);
-    console.log('-------------------------------\n');
+    // 🎯 MUDANÇA 6: LOGS DE WEBHOOK CONDICIONAIS
+    if (!isProduction) {
+        console.log(`\n--- Webhook Asaas Recebido ---`);
+        console.log(`Evento: ${event}`);
+        console.log(`ID do Pagamento: ${payment?.id || 'N/A'}`);
+        console.log(`Status do Pagamento: ${payment?.status || 'N/A'}`);
+        console.log('-------------------------------\n');
+    }
 
     try {
         if (!payment || !payment.id) {
@@ -230,12 +247,10 @@ app.post('/webhook/asaas', async (req, res) => {
         switch (event) {
             case 'PAYMENT_RECEIVED': 
             case 'PAYMENT_CONFIRMED':
-                // É neste ponto que você deve:
-                // 1. **Buscar o Pedido no seu DB** (usando `payment.description` ou `externalReference`).
-                // 2. **Atualizar o Status do Pedido** para 'Pago' ou 'Em Preparo'.
-                // 3. **Acionar a logística** (imprimir pedido, notificar cozinha).
-
-                console.log(`✅ Pagamento ${payment.id} recebido/confirmado! Status do pedido precisa ser alterado no DB.`);
+                // 🎯 MUDANÇA 7: LOGS DE CONFIRMAÇÃO CONDICIONAIS
+                if (!isProduction) {
+                    console.log(`✅ Pagamento ${payment.id} recebido/confirmado! Status do pedido precisa ser alterado no DB.`);
+                }
                 
                 simulateUserNotification(
                     payment.id,
@@ -245,44 +260,47 @@ app.post('/webhook/asaas', async (req, res) => {
                 break;
 
             case 'PAYMENT_PENDING': 
-                console.log(`⏳ Pagamento ${payment.id} ainda pendente. Status: ${payment.status}`);
+                // 🎯 MUDANÇA 8: LOGS DE PENDÊNCIA CONDICIONAIS
+                if (!isProduction) {
+                    console.log(`⏳ Pagamento ${payment.id} ainda pendente. Status: ${payment.status}`);
+                }
                 break;
 
             case 'PAYMENT_OVERDUE': 
-                console.log(`❌ Pagamento ${payment.id} está vencido. Marcar pedido como Cancelado/Vencido no DB.`);
+                // 🎯 MUDANÇA 9: LOGS DE VENCIMENTO CONDICIONAIS
+                if (!isProduction) {
+                    console.log(`❌ Pagamento ${payment.id} está vencido. Marcar pedido como Cancelado/Vencido no DB.`);
+                }
                 simulateUserNotification(
                     payment.id,
                     `Seu pagamento de R$ ${payment.value} venceu. Por favor, faça um novo pedido.`
                 );
                 break;
             
-            // Outros eventos importantes...
             default:
-                console.log(`Evento ${event} recebido, mas sem ação específica definida.`);
+                // 🎯 MUDANÇA 10: LOGS DE EVENTO CONDICIONAIS
+                if (!isProduction) {
+                    console.log(`Evento ${event} recebido, mas sem ação específica definida.`);
+                }
         }
 
-        // Resposta obrigatória: Retorna 200 OK para o Asaas
         res.status(200).json({ received: true });
 
     } catch (error) {
         console.error('Erro ao processar webhook do Asaas:', error);
-        // Retorna 200 para evitar reenvios em loop, mesmo em caso de erro interno
         res.status(200).json({ received: true, error: 'Internal processing error' });
     }
 });
 
 
 // ========================
-// Roteamento para arquivos estáticos (DEVE VIR DEPOIS das rotas /api e /webhook)
+// Roteamento para arquivos estáticos (sem alterações)
 // ========================
-
-// Roteamento automático para index.html da raiz
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/:page', (req, res, next) => {
-    // evita interceptar rotas de API/Webhook e caminhos de arquivo profundo
     const page = req.params.page;
     if (page.startsWith('api') || page.startsWith('webhook') || page.includes('.')) return next();
 
@@ -292,14 +310,20 @@ app.get('/:page', (req, res, next) => {
     });
 });
 
-// ===== Middleware 404 =====
+// ===== Middleware 404 (sem alterações) =====
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, '404.html'), (err) => {
         if (err) res.status(404).send('<h1>404 - Página não encontrada</h1>');
     });
 });
 
-// ===== Inicializar servidor =====
+// ===== Inicializar servidor (LOG FINAL MUDADO) =====
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    // 🎯 MUDANÇA 11: LOG DE INICIALIZAÇÃO CONDICIONAL
+    if (!isProduction) {
+        console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    } else {
+        // Log minimalista apenas para indicar que a aplicação subiu
+        console.log(`Servidor iniciado. Ambiente: Produção.`);
+    }
 });
