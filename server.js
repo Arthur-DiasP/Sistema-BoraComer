@@ -6,6 +6,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import http from 'http';
+import { WebSocketServer } from 'ws';
 
 // ==========================================================
 // 🎯 MUDANÇA 1: BLOCO PARA SILENCIAR LOGS EM PRODUÇÃO (RENDER)
@@ -196,7 +198,7 @@ app.get('/api/payment-status/:id', async (req, res) => {
         const response = await asaasAPI(`/payments/${paymentId}`);
         const data = await response.json();
 
-        if (!response.ok) {
+        if (!response.ok) {
             console.error('Erro ao consultar status do Asaas:', data);
             return res.status(response.status).json({ error: 'Falha ao buscar status do pagamento no Asaas', details: data.errors || data });
         }
@@ -256,6 +258,7 @@ app.post('/webhook/asaas', async (req, res) => {
                     payment.id,
                     `Seu pagamento de R$ ${payment.value} foi confirmado! Seu pedido está sendo preparado. 🍕`
                 );
+                notifyClient(payment.id, payment.status); // Notifica o cliente via WebSocket
 
                 break;
 
@@ -268,6 +271,7 @@ app.post('/webhook/asaas', async (req, res) => {
                     if (!isProduction) {
                         console.log(`⏳ Pagamento ${payment.id} ainda pendente (CREATED com status PENDING).`);
                     }
+                    notifyClient(payment.id, payment.status); // Notifica o cliente que está pendente
                 }
                 break;
             // ==========================================================
@@ -282,6 +286,7 @@ app.post('/webhook/asaas', async (req, res) => {
                     payment.id,
                     `Seu pagamento de R$ ${payment.value} venceu. Por favor, faça um novo pedido.`
                 );
+                notifyClient(payment.id, payment.status); // Notifica o cliente via WebSocket
                 break;
             
             default:
@@ -325,7 +330,58 @@ app.use((req, res) => {
 });
 
 // ===== Inicializar servidor (LOG FINAL MUDADO) =====
-app.listen(PORT, () => {
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+// Mapa para associar paymentId a conexões WebSocket
+const paymentClients = new Map();
+
+wss.on('connection', (ws) => {
+    console.log('Cliente WebSocket conectado');
+    let paymentIdForClient = null; // Para rastrear o paymentId desta conexão
+
+    ws.on('message', (message) => {
+        try {
+            const data = JSON.parse(message);
+            // O cliente se registra com um paymentId
+            if (data.type === 'register' && data.paymentId) {
+                paymentIdForClient = data.paymentId;
+                paymentClients.set(paymentIdForClient, ws);
+                console.log(`Cliente registrado para o paymentId: ${paymentIdForClient}`);
+            }
+        } catch (e) {
+            console.log('Mensagem inválida recebida: %s', message);
+        }
+    });
+
+    ws.on('close', () => {
+        console.log('Cliente WebSocket desconectado');
+        // Remove o cliente do mapa quando a conexão é fechada
+        if (paymentIdForClient) {
+            paymentClients.delete(paymentIdForClient);
+            console.log(`Cliente para o paymentId: ${paymentIdForClient} foi removido.`);
+        }
+    });
+});
+
+// Função para notificar o cliente via WebSocket
+function notifyClient(paymentId, status) {
+    if (paymentClients.has(paymentId)) {
+        const ws = paymentClients.get(paymentId);
+        if (ws.readyState === 1) { // 1 === WebSocket.OPEN
+            console.log(`Enviando notificação de status '${status}' para o paymentId: ${paymentId}`);
+            ws.send(JSON.stringify({ type: 'payment_status', status: status, paymentId: paymentId }));
+            
+            // Opcional: fechar a conexão e remover do mapa após notificação final
+            if (status === 'CONFIRMED' || status === 'RECEIVED' || status === 'OVERDUE') {
+                ws.close();
+                paymentClients.delete(paymentId);
+            }
+        }
+    }
+}
+
+server.listen(PORT, () => {
     // 🎯 MUDANÇA 11: LOG DE INICIALIZAÇÃO CONDICIONAL
     if (!isProduction) {
         console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);

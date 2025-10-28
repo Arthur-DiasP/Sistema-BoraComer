@@ -22,6 +22,9 @@
     <!-- Biblioteca de Gráficos Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Bibliotecas para Geração de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
@@ -451,7 +454,24 @@
 
             <!-- ====== Seção Pedidos ====== -->
             <section id="section-pedidos" class="content-section">
-                <div class="list-header"><h2>Histórico de Pedidos</h2><div class="filter-buttons" id="pedidos-filter-buttons"><button class="filter-btn active" data-status="todos">Todos</button><button class="filter-btn" data-status="Pagamento Pendente">Pendentes</button><button class="filter-btn" data-status="Concluído">Concluídos</button><button class="filter-btn" data-status="Cancelado">Cancelados</button></div></div>
+                <div class="list-header">
+                    <h2>Histórico de Pedidos</h2>
+                    <div class="list-actions">
+                        <div class="form-group-checkbox">
+                            <input type="checkbox" id="select-all-orders-checkbox">
+                            <label for="select-all-orders-checkbox">Selecionar Todos</label>
+                        </div>
+                        <button id="delete-selected-orders-btn" class="btn btn-danger" disabled>
+                            <i class="material-icons">delete</i> Excluir Selecionados
+                        </button>
+                    </div>
+                    <div class="filter-buttons" id="pedidos-filter-buttons">
+                        <button class="filter-btn active" data-status="todos">Todos</button>
+                        <button class="filter-btn" data-status="Pagamento Pendente">Pendentes</button>
+                        <button class="filter-btn" data-status="Concluído">Concluídos</button>
+                        <button class="filter-btn" data-status="Cancelado">Cancelados</button>
+                    </div>
+                </div>
                 <div id="all-orders-list" class="card"><p>Carregando histórico de pedidos...</p></div>
             </section>
             
@@ -692,6 +712,24 @@
                     <div class="maps-links">
                         <a href="#" id="google-maps-link" target="_blank" class="map-link google"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_(2020).svg" alt="Google Maps"><span>Google Maps</span></a>
                         <a href="#" id="waze-link" target="_blank" class="map-link waze"><img src="https://cdn-1.webcatalog.io/catalog/waze/waze-icon-256.png" alt="Waze"><span>Waze</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para Confirmação de Exclusão de Pedidos -->
+            <div class="modal-overlay" id="delete-confirm-modal">
+                <div class="modal-content">
+                    <button class="close-modal-btn" id="close-delete-modal-btn">&times;</button>
+                    <h2>Confirmar Exclusão</h2>
+                    <p>Para confirmar a exclusão dos pedidos selecionados, por favor, insira sua senha de administrador. Esta ação não pode ser desfeita.</p>
+                    <div class="form-group">
+                        <label for="admin-password-input">Senha do Administrador</label>
+                        <input type="password" id="admin-password-input" class="form-control" placeholder="Digite sua senha">
+                        <p class="error-message" id="password-error-message" style="display: none;"></p>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="cancel-delete-btn" class="btn btn-secondary">Cancelar</button>
+                        <button id="confirm-delete-btn" class="btn btn-danger">Confirmar e Excluir</button>
                     </div>
                 </div>
             </div>

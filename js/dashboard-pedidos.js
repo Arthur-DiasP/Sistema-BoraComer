@@ -1,11 +1,22 @@
 // js/dashboard-pedidos.js
 
 import { firestore } from './firebase-config.js';
-import { collection, onSnapshot, orderBy, query, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, onSnapshot, orderBy, query, doc, updateDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // --- SELETORES GLOBAIS DO MÓDULO ---
 const ordersListElement = document.getElementById('all-orders-list');
 const filterButtonsContainer = document.getElementById('pedidos-filter-buttons');
+const selectAllCheckbox = document.getElementById('select-all-orders-checkbox');
+const deleteSelectedBtn = document.getElementById('delete-selected-orders-btn');
+
+// Seletores do Modal de Exclusão
+const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+const closeDeleteModalBtn = document.getElementById('close-delete-modal-btn');
+const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+const adminPasswordInput = document.getElementById('admin-password-input');
+const passwordErrorMessage = document.getElementById('password-error-message');
+
 
 // Seletores do Modal de Mapas
 const mapsModalOverlay = document.getElementById('maps-modal-overlay');
@@ -24,6 +35,7 @@ const confirmAssignBtn = document.getElementById('confirm-assign-btn');
 let allOrders = []; // Armazena todos os pedidos para filtragem rápida
 let allMotoboys = []; // Armazena os entregadores cadastrados
 let currentOrderToAssign = null; // Guarda o ID do pedido a ser designado
+let selectedOrders = []; // Armazena os IDs dos pedidos selecionados para exclusão
 
 /**
  * Carrega a lista de entregadores do Firestore para preencher o seletor no modal.
@@ -189,6 +201,7 @@ function renderFilteredOrders(statusFilter) {
         pedidoCard.innerHTML = `
             <div class="card-header">
                 <div class="card-title">
+                    <input type="checkbox" class="order-select-checkbox" data-order-id="${orderId}">
                     <span class="order-id">#${orderId.substring(0, 8)}</span>
                     <h4 class="client-name">${pedido.cliente?.nome || 'Cliente'}</h4>
                 </div>
@@ -251,23 +264,143 @@ export function init() {
     });
     confirmAssignBtn.addEventListener('click', handleAssignMotoboy);
 
-    // Inicia a escuta de pedidos em tempo real
-    try {
-        const q = query(collection(firestore, "pedidos"), orderBy("data", "desc"));
-        
-        onSnapshot(q, (querySnapshot) => {
-            allOrders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            
-            const activeFilter = filterButtonsContainer.querySelector('.filter-btn.active').dataset.status;
-            renderFilteredOrders(activeFilter);
+    /**
+     * Atualiza o estado do botão de exclusão e do checkbox "Selecionar Todos".
+     */
+    function updateDeleteButtonState() {
+        const checkboxes = ordersListElement.querySelectorAll('.order-select-checkbox');
+        const checkedCount = selectedOrders.length;
 
-        }, (error) => {
-            console.error("Erro ao escutar mudanças nos pedidos:", error);
-            ordersListElement.innerHTML = '<p>Erro ao carregar o histórico em tempo real.</p>';
+        deleteSelectedBtn.disabled = checkedCount === 0;
+        
+        const icon = '<i class="material-icons">delete</i>';
+        deleteSelectedBtn.innerHTML = checkedCount > 0 ? `${icon} Excluir ${checkedCount} Pedido(s)` : `${icon} Excluir Selecionados`;
+
+        if (checkboxes.length > 0) {
+            selectAllCheckbox.checked = checkedCount === checkboxes.length;
+        } else {
+            selectAllCheckbox.checked = false;
+        }
+    }
+
+    /**
+     * Lida com a seleção de um pedido individual.
+     * @param {Event} event
+     */
+    function handleOrderSelection(event) {
+        if (!event.target.classList.contains('order-select-checkbox')) return;
+
+        const orderId = event.target.dataset.orderId;
+        if (event.target.checked) {
+            if (!selectedOrders.includes(orderId)) {
+                selectedOrders.push(orderId);
+            }
+        } else {
+            selectedOrders = selectedOrders.filter(id => id !== orderId);
+        }
+        updateDeleteButtonState();
+    }
+
+    /**
+     * Lida com o clique no checkbox "Selecionar Todos".
+     */
+    function handleSelectAll() {
+        const checkboxes = ordersListElement.querySelectorAll('.order-select-checkbox');
+        selectedOrders = []; // Limpa a seleção atual
+
+        if (selectAllCheckbox.checked) {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                selectedOrders.push(checkbox.dataset.orderId);
+            });
+        } else {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+        updateDeleteButtonState();
+    }
+
+    /**
+     * Gera um PDF com os pedidos selecionados e, em seguida, os exclui.
+     */
+    async function generatePdfAndDelete() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const ordersToDelete = allOrders.filter(order => selectedOrders.includes(order.id));
+
+        const tableColumn = ["ID do Pedido", "Cliente", "Data", "Total", "Status"];
+        const tableRows = [];
+
+        ordersToDelete.forEach(order => {
+            const orderData = [
+                order.id.substring(0, 8),
+                order.cliente?.nome || 'N/A',
+                order.data ? order.data.toDate().toLocaleDateString('pt-BR') : 'N/A',
+                `R$ ${order.total ? order.total.toFixed(2) : '0.00'}`,
+                order.status || 'N/A'
+            ];
+            tableRows.push(orderData);
         });
 
-    } catch (error) {
-        console.error("Erro ao configurar o listener de pedidos:", error);
-        ordersListElement.innerHTML = '<p>Erro ao iniciar a busca por pedidos.</p>';
+        doc.autoTable(tableColumn, tableRows, { startY: 20 });
+        doc.text("Relatório de Pedidos Excluídos", 14, 15);
+        const date = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+        doc.save(`pedidos-excluidos-${date}.pdf`);
+
+        // Excluir os pedidos do Firestore
+        const deletePromises = selectedOrders.map(orderId => deleteDoc(doc(firestore, "pedidos", orderId)));
+        
+        try {
+            await Promise.all(deletePromises);
+            alert(`${selectedOrders.length} pedido(s) excluído(s) com sucesso!`);
+            selectedOrders = [];
+            updateDeleteButtonState();
+        } catch (error) {
+            console.error("Erro ao excluir pedidos: ", error);
+            alert("Ocorreu um erro ao excluir os pedidos. Verifique o console para mais detalhes.");
+        }
     }
+
+    /**
+     * Verifica a senha do administrador e inicia o processo de exclusão.
+     */
+    function verifyPasswordAndGeneratePDF() {
+        const password = adminPasswordInput.value;
+        // ATENÇÃO: A senha está hardcoded. Em um ambiente de produção, use um método seguro de verificação.
+        if (password === '111111') {
+            passwordErrorMessage.style.display = 'none';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.textContent = 'Processando...';
+
+            generatePdfAndDelete().finally(() => {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = 'Confirmar e Excluir';
+                closeModal();
+            });
+
+        } else {
+            passwordErrorMessage.textContent = 'Senha incorreta.';
+            passwordErrorMessage.style.display = 'block';
+        }
+    }
+    
+    const closeModal = () => {
+        deleteConfirmModal.classList.remove('visible');
+        adminPasswordInput.value = '';
+        passwordErrorMessage.style.display = 'none';
+    };
+
+    // --- LISTENERS PARA EXCLUSÃO ---
+    ordersListElement.addEventListener('click', handleOrderSelection);
+    selectAllCheckbox.addEventListener('change', handleSelectAll);
+
+    deleteSelectedBtn.addEventListener('click', () => {
+        deleteConfirmModal.classList.add('visible');
+    });
+
+    closeDeleteModalBtn.addEventListener('click', closeModal);
+    cancelDeleteBtn.addEventListener('click', closeModal);
+    confirmDeleteBtn.addEventListener('click', verifyPasswordAndGeneratePDF);
 }

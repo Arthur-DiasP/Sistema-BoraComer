@@ -525,3 +525,66 @@ body {
     .notification-content h4 { font-size: 1rem; }
     .notification-actions { flex-direction: column-reverse; gap: 0.5rem; align-items: flex-end; }
 }
+
+/* --- Estilos para Exclusão de Pedidos --- */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.list-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    order: 1; /* Garante que as ações venham primeiro em telas menores */
+}
+
+.filter-buttons {
+    order: 2;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+}
+
+.card-title .order-select-checkbox {
+    margin-right: 1rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+#delete-selected-orders-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#delete-selected-orders-btn .material-icons {
+    font-size: 1.2rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .list-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .list-actions {
+        order: 2; /* Ações de exclusão abaixo dos filtros em mobile */
+        justify-content: space-between;
+    }
+    .filter-buttons {
+        order: 1;
+    }
+}

@@ -4,7 +4,7 @@
 /*       1. VARIÁVEIS GLOBAIS E RESET            */
 /* ============================================= */
 :root {
-    --primary-color: #FFB800;      /* Cheddar / Amarelo Principal */
+    --primary-color: #F5b022;      /* Cheddar / Amarelo Principal */
     --secondary-color: #2c2c2c;   /* Preto Suave */
     --accent-color: #D92027;       /* Vermelho para detalhes e ações */
     --background-color: #f9f6f2; /* Fundo principal suave */
@@ -1168,4 +1168,11 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 }
 @media (max-width: 480px) {
     .delivery-message { font-size: 1.8rem; }
+}
+
+/* Adiciona mais espaço inferior para a tela de splash em tablets */
+@media (min-width: 600px) and (max-width: 1024px) {
+    .splash-screen footer p {
+        padding-bottom: 15vh;
+    }
 }

@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     pixCopyPasteInput.value = data.pixQrCode.payload;
                     pixModalOverlay.classList.add('visible');
 
-                    // NOVO: Inicia o monitoramento do status para PIX
-                    startPaymentPolling(data.id, data.billingType); 
+                    // NOVO: Inicia o monitoramento via WebSocket
+                    startWebSocketMonitoring(data.id); 
 
                 } else {
                     console.error("A resposta da API para o PIX não continha os dados do QR Code. Resposta recebida:", data);
@@ -286,61 +286,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Inicia o monitoramento do status de pagamento (PIX ou Boleto)
-     * consultando o backend periodicamente.
-     */
-    function startPaymentPolling(asaasPaymentId, billingType) {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-        }
+    function startWebSocketMonitoring(paymentId) {
+        const protocol = window.location.protocol === 'https' ? 'wss' : 'ws';
+        const wsUrl = `${protocol}://${window.location.host}`;
+        const socket = new WebSocket(wsUrl);
 
-        const checkStatus = async () => {
+        socket.onopen = () => {
+            console.log('WebSocket conectado. Registrando para o paymentId:', paymentId);
+            socket.send(JSON.stringify({ type: 'register', paymentId: paymentId }));
+        };
+
+        socket.onmessage = (event) => {
             try {
-                const response = await fetch(`/api/payment-status/${asaasPaymentId}`);
-                const data = await response.json();
+                const data = JSON.parse(event.data);
+                if (data.type === 'payment_status' && data.paymentId === paymentId) {
+                    console.log(`Status recebido via WebSocket: ${data.status}`);
+                    const paymentStatus = data.status;
 
-                if (!response.ok) {
-                    console.error('Erro no polling:', data.error);
-                    return; 
-                }
-
-                const paymentStatus = data.status;
-
-                // Pagamentos confirmados pelo Asaas
-                if (paymentStatus === 'CONFIRMED' || paymentStatus === 'RECEIVED') {
-                    clearInterval(pollingInterval);
-                    console.log(`Pagamento ${asaasPaymentId} CONFIRMADO!`);
-                    
-                    // Fecha o modal PIX, se estiver aberto
-                    pixModalOverlay.classList.remove('visible');
-                    
-                    // Finaliza o pedido e concede as recompensas
-                    // ATUALIZAÇÃO: Passa o status correto para a finalização.
-                    await finalizeOrder(data.billingType, {}, 'Concluído'); 
-
-                } 
-                // Pagamento cancelado ou expirado
-                else if (paymentStatus === 'CANCELLED' || paymentStatus === 'OVERDUE') {
-                    clearInterval(pollingInterval);
-                    console.log(`Pagamento ${asaasPaymentId} CANCELADO/VENCIDO.`);
-                    pixModalOverlay.classList.remove('visible');
-                    showPaymentError('Pagamento Falhou', 'O prazo para o pagamento expirou ou ele foi cancelado. Por favor, refaça o pedido.');
-                }
-
-                // Se for PENDING, continua esperando
-                else {
-                    console.log(`Status de pagamento atual: ${paymentStatus}. Aguardando confirmação...`);
+                    if (paymentStatus === 'CONFIRMED' || paymentStatus === 'RECEIVED') {
+                        pixModalOverlay.classList.remove('visible');
+                        finalizeOrder('PIX', {}, 'Concluído');
+                        socket.close(); // Fecha a conexão após o sucesso
+                    } else if (paymentStatus === 'CANCELLED' || paymentStatus === 'OVERDUE') {
+                        pixModalOverlay.classList.remove('visible');
+                        showPaymentError('Pagamento Falhou', 'O prazo para o pagamento expirou ou ele foi cancelado. Por favor, refaça o pedido.');
+                        socket.close(); // Fecha a conexão após a falha
+                    } else {
+                        // Opcional: pode-se adicionar uma notificação para status PENDING aqui
+                        console.log(`Status de pagamento atual: ${paymentStatus}. Aguardando confirmação...`);
+                    }
                 }
             } catch (error) {
-                console.error("Erro na comunicação de polling:", error);
-                // Continua tentando em caso de erro de rede temporário
+                console.error("Erro ao processar mensagem do WebSocket:", error);
             }
         };
 
-        // Inicia o polling
-        pollingInterval = setInterval(checkStatus, POLLING_INTERVAL_MS);
-        console.log(`Polling iniciado para o pagamento ID: ${asaasPaymentId}`);
+        socket.onclose = () => {
+            console.log('WebSocket desconectado.');
+        };
+
+        socket.onerror = (error) => {
+            console.error('Erro no WebSocket:', error);
+            // Como fallback, podemos reverter para o polling ou mostrar um erro
+            showPaymentError('Erro de Conexão', 'Não foi possível conectar ao serviço de notificações em tempo real. A página pode não ser atualizada automaticamente.');
+        };
     }
     
     function copyPixCode() {

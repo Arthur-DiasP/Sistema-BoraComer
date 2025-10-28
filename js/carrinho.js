@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemCard = document.createElement('div');
             itemCard.className = 'cart-item-card';
             itemCard.innerHTML = `
-                <img src="${item.imagem}" alt="${item.nome}" class="cart-item-image">
+                <img src="${item.img || '/img/LOGO-BORACOMER-(fdcheddar).png'}" alt="${item.nome}" class="cart-item-image">
                 <div class="cart-item-details">
                     <h3>${item.nome}</h3>
                     <p class="cart-item-price">${formatCurrency(item.preco)}</p>
