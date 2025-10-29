@@ -101,17 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (error) => {
                 console.error("Erro ao carregar histórico:", error);
-                orderHistoryList.innerHTML = `
-                    <div class="error-container">
-                        <p class="error-message">
-                            <strong>Erro ao carregar histórico de pedidos.</strong><br>
-                            Isso geralmente acontece por uma configuração pendente no banco de dados. 
-                            Por favor, abra o console do desenvolvedor (F12), copie o erro que aparece em vermelho e envie para o suporte.
-                        </p>
-                        <button class="btn-retry" id="retry-button">Tentar Novamente</button>
-                    </div>
-                `;
-                document.getElementById('retry-button').addEventListener('click', loadOrderHistory);
+                orderHistoryList.innerHTML = '<p class="info-message">Não foi possível carregar o histórico de pedidos.</p>';
             }
         );
     };

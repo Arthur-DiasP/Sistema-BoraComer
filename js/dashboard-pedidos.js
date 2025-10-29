@@ -238,10 +238,23 @@ function renderFilteredOrders(statusFilter) {
  */
 export function init() {
     ordersListElement.innerHTML = '<p>Carregando histórico de pedidos...</p>';
-    
-    // Carrega a lista de entregadores para o modal
+
     loadMotoboys();
-    
+
+    const q = query(collection(firestore, "pedidos"), orderBy("data", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+        allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        const currentFilter = filterButtonsContainer.querySelector('.active').dataset.status;
+        renderFilteredOrders(currentFilter);
+        
+        updateDeleteButtonState();
+    }, (error) => {
+        console.error("Erro ao carregar pedidos em tempo real:", error);
+        ordersListElement.innerHTML = '<p>Erro ao carregar histórico de pedidos. Verifique o console.</p>';
+    });
+
     // Configura os event listeners uma única vez
     ordersListElement.addEventListener('change', handleStatusChange);
     ordersListElement.addEventListener('click', handleOrderCardClick);
