@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (error) => {
                 console.error("Erro ao carregar histórico:", error);
-                orderHistoryList.innerHTML = '<p class="info-message">Não foi possível carregar o histórico de pedidos.</p>';
+                orderHistoryList.innerHTML = '<p class="info-message">Você ainda não fez nenhum pedido.</p>';
             }
         );
     };
