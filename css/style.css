@@ -1189,8 +1189,8 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 
     /* Altera o container dos cards para um layout de coluna */
     .balances-summary {
-        flex-direction: column; /* Empilha os cards verticalmente */
-        gap: 12px;              /* Adiciona um espaço entre os cards empilhados */
+        grid-template-columns: 1fr; /* Define uma única coluna para o grid */
+        gap: 12px;                  /* Adiciona um espaço entre os cards empilhados */
     }
 
     /* Ajusta o tamanho dos cards para o novo layout */
