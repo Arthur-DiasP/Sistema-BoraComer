@@ -53,7 +53,8 @@
                     <li><a href="#" class="nav-link" data-target="cupons-promocionais"><i class="material-icons">sell</i><span>Cupons Promocionais</span></a></li>
 
                     <li class="nav-divider"><span>Monetização</span></li>
-                    <li><a href="#" class="nav-link" data-target="parceiros"><i class="material-icons">storefront</i><span>Anunciantes</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="anunciantes-locais"><i class="material-icons">storefront</i><span>Anunciantes Locais</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="campanhas-usuarios"><i class="material-icons">group</i><span>Campanhas de Usuários</span></a></li>
                     <li><a href="#" class="nav-link" data-target="jogo"><i class="material-icons">sports_esports</i><span>Jogo Premiado</span></a></li>
                     <li><a href="#" class="nav-link" data-target="indicacoes"><i class="material-icons">group_add</i><span>Indicações</span></a></li>
                     
@@ -524,7 +525,7 @@
             </section>
 
             <!-- ====== Seção Anunciantes Locais ====== -->
-            <section id="section-parceiros" class="content-section">
+            <section id="section-anunciantes-locais" class="content-section">
                 <div class="card">
                     <h2>Gerenciar Anunciantes</h2>
                     <p>Aprove, pause ou reprove as campanhas enviadas pelos parceiros locais.</p>
@@ -540,6 +541,37 @@
                                 </tr>
                             </thead>
                             <tbody id="advertisers-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Campanhas de Usuários ====== -->
+            <section id="section-campanhas-usuarios" class="content-section">
+                <div class="card">
+                    <h2>Gerenciar Campanhas de Usuários</h2>
+                    <p>Aprove, pause ou reprove as campanhas enviadas pelos usuários através da página "Anuncie Conosco".</p>
+                    <div class="filter-buttons" id="user-campaigns-filter-buttons" style="margin-top: 1.5rem;">
+                        <button class="filter-btn active" data-status="todos">Todos</button>
+                        <button class="filter-btn" data-status="pendente">Pendentes</button>
+                        <button class="filter-btn" data-status="ativo">Ativos</button>
+                        <button class="filter-btn" data-status="pausado">Pausados</button>
+                        <button class="filter-btn" data-status="reprovado">Reprovados</button>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 1.5rem;">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Anúncio</th>
+                                    <th>Mídia</th>
+                                    <th>Orçamento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-campaigns-table-body">
+                                <!-- Conteúdo gerado pelo dashboard-anunciantes.js -->
+                            </tbody>
                         </table>
                     </div>
                 </div>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conheça os parceiros da Pizzaria Moraes e aproveite vantagens exclusivas.">
+    <title>Anuncie Conosco - BoraComer</title>
+    <link rel="icon" href="/img/LOGO-BORACOMER-(fdcheddar).png" type="image/png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <header class="app-header-simple">
+        <h1>Anuncie Conosco</h1>
+    </header>
+
+    <main class="container">
+        <form id="anuncio-form" class="anuncio-form-container">
+            <!-- Seção 1: Sobre o Anúncio -->
+            <div class="card anuncio-step">
+                <div class="anuncio-step-header">
+                    <div class="step-number">1</div>
+                    <h2>Sobre seu Anúncio</h2>
+                </div>
+                <div class="anuncio-step-body">
+                    <div class="form-group">
+                        <label for="anuncio-nome">Nome do Anúncio</label>
+                        <div class="input-with-icon">
+                            <i class="material-icons">label</i>
+                            <input type="text" id="anuncio-nome" placeholder="Ex: Promoção de Verão da Loja X" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>O que você vai anunciar?</label>
+                        <div class="radio-group-horizontal">
+                            <label><input type="radio" name="anuncio-tipo" value="produto" checked> Produto</label>
+                            <label><input type="radio" name="anuncio-tipo" value="empresa"> Empresa</label>
+                            <label><input type="radio" name="anuncio-tipo" value="projeto"> Projeto</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="anuncio-descricao">Descrição Curta (máx. 150 caracteres)</label>
+                        <textarea id="anuncio-descricao" rows="3" placeholder="Fale um pouco sobre o que está anunciando..." maxlength="150" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 2: Mídia -->
+            <div class="card anuncio-step">
+                <div class="anuncio-step-header">
+                    <div class="step-number">2</div>
+                    <h2>Mídia do Anúncio</h2>
+                </div>
+                <div class="anuncio-step-body">
+                    <div class="form-group">
+                        <label for="anuncio-imagem-url">URL da Imagem Principal</label>
+                        <div class="input-with-icon">
+                            <i class="material-icons">image</i>
+                            <input type="url" id="anuncio-imagem-url" placeholder="https://exemplo.com/imagem.png" required>
+                        </div>
+                        <small class="form-hint">Sua imagem aparecerá nos banners. Use uma boa resolução (16:7).</small>
+                        <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                            <p>Pré-visualização:</p>
+                            <img id="image-preview" src="" alt="Pré-visualização da imagem">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="anuncio-video-url">URL de Vídeo (Opcional)</label>
+                        <div class="input-with-icon">
+                            <i class="material-icons">videocam</i>
+                            <input type="url" id="anuncio-video-url" placeholder="https://youtube.com/seu-video">
+                        </div>
+                        <small class="form-hint">Se preenchido, seu vídeo poderá aparecer no lugar da imagem.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 3: Orçamento -->
+            <div class="card anuncio-step">
+                <div class="anuncio-step-header">
+                    <div class="step-number">3</div>
+                    <h2>Defina seu Orçamento</h2>
+                </div>
+                <div class="budget-slider-container">
+                    <div class="budget-display">
+                        <span>Seu Investimento:</span>
+                        <strong id="budget-display-value">R$ 50,00</strong>
+                    </div>
+                    <input type="range" id="budget-slider" min="50" max="1000" step="50" value="50">
+                    <div class="budget-labels">
+                        <span>R$ 50</span>
+                        <span>R$ 1.000</span>
+                    </div>
+                    <div id="campaign-tier-info" class="campaign-tier-info">
+                        <h3>Plano Básico</h3>
+                        <p>Sua campanha ficará no ar por <strong>até 7 dias</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 4: Finalização -->
+            <div class="card anuncio-step">
+                <div class="anuncio-step-header">
+                    <div class="step-number">4</div>
+                    <h2>Finalizar</h2>
+                </div>
+                <div class="form-group-checkbox terms-checkbox">
+                    <input type="checkbox" id="terms-checkbox" required>
+                    <label for="terms-checkbox">Li e aceito os <a href="#" id="open-terms-modal">Termos de Anúncio</a>.</label>
+                </div>
+                <button type="submit" id="submit-anuncio-btn" class="btn btn-primary btn-block" disabled title="Preencha todos os campos para continuar">
+                    Gerar Cobrança PIX
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i><span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="anuncie.html" class="nav-item active"><i class="material-icons">campaign</i><span>Anuncie</span></a>
+        <a href="jogo.html" class="nav-item"><i class="material-icons">sports_esports</i><span>Jogar</span></a>
+        <a href="indicacao.html" class="nav-item"><i class="material-icons">group_add</i><span>Indicar</span></a>
+        <a href="perfil.html" class="nav-item"><i class="material-icons">person</i><span>Perfil</span></a>
+    </nav>
+
+    <!-- MODAL PARA OS TERMOS E CONDIÇÕES -->
+    <div class="payment-modal-overlay" id="terms-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-terms-modal-btn" aria-label="Fechar">&times;</button>
+            <h2>Termos de Anúncio</h2>
+            <div class="terms-content">
+                <p>Ao anunciar no BoraComer, você concorda com os seguintes termos:</p>
+                <ol>
+                    <li><strong>Conteúdo:</strong> Todo o conteúdo do anúncio (textos, imagens, vídeos) é de sua responsabilidade e não deve violar direitos autorais ou conter material ofensivo.</li>
+                    <li><strong>Pagamento:</strong> O pagamento é processado via PIX e a campanha só é ativada após a confirmação. Não há reembolso após o início da veiculação.</li>
+                    <li><strong>Duração:</strong> A duração da campanha é uma estimativa baseada no orçamento e pode variar conforme a demanda.</li>
+                    <li><strong>Aprovação:</strong> Reservamo-nos o direito de revisar e reprovar anúncios que não estejam em conformidade com nossas políticas.</li>
+                    <li><strong>Dados:</strong> Os dados fornecidos serão usados para a criação da campanha e contato relacionado.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NOVO MODAL PARA PAGAMENTO PIX -->
+    <div class="payment-modal-overlay" id="pix-payment-modal-overlay">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn" id="close-pix-payment-modal-btn" aria-label="Fechar">&times;</button>
+            <h2>Pague com Pix para Ativar</h2>
+            
+            <div class="payment-total-summary" style="margin-bottom: 1rem; border-bottom: none; padding: 0;">
+                <span>Valor a Pagar</span>
+                <strong id="pix-modal-total-value">R$ 0,00</strong>
+            </div>
+    
+            <div class="pix-payment-section">
+                <p class="pix-instructions">Escaneie o QR Code com o app do seu banco ou use o código "copia e cola". Sua campanha será ativada após a confirmação.</p>
+                
+                <div class="pix-qr-code" id="pix-qr-code-container">
+                    <div class="spinner"></div>
+                </div>
+                
+                <div class="pix-copy-paste">
+                    <input type="text" id="pix-copy-paste-code" readonly value="Gerando código...">
+                    <button id="copy-pix-code-btn" title="Copiar código"><i class="material-icons">content_copy</i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/anuncie.js"></script>
+    <script type="module" src="/js/main.js"></script>
+
+</body>
+</html>

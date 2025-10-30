@@ -26,6 +26,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Suas credenciais de configuração do Firebase para este projeto web
 // Estas credenciais podem ser encontradas no seu Console do Firebase:
@@ -47,7 +48,8 @@ const app = initializeApp(firebaseConfig);
 // Obtém uma instância de cada serviço do Firebase que será utilizado no projeto
 const database = getDatabase(app);     // Conexão com o Realtime Database
 const firestore = getFirestore(app);   // Conexão com o Cloud Firestore
+const storage = getStorage(app);       // Conexão com o Firebase Storage
 
 // Exporta as instâncias para que possam ser importadas e utilizadas
 // em outros arquivos JavaScript do projeto (ex: auth.js, cardapio.js, etc.)
-export { database, firestore };
+export { database, firestore, storage };

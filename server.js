@@ -185,6 +185,87 @@ app.post('/api/create-payment', async (req, res) => {
     }
 });
 
+// ==========================================================
+// 🎯 NOVA ROTA: Criar Pagamento para Anúncios
+// ==========================================================
+app.post('/api/create-ad-payment', async (req, res) => {
+    try {
+        const { userData, adId, budget } = req.body;
+
+        if (!userData || !adId || !budget) {
+            return res.status(400).json({ error: 'Dados do anúncio incompletos (userData, adId, budget).' });
+        }
+
+        // 1. Usa os dados do usuário recebidos do cliente
+        const cleanCpf = userData.cpf?.replace(/\D/g, '');
+        
+        if (!cleanCpf || cleanCpf.length !== 11) {
+            return res.status(400).json({ error: 'CPF inválido ou ausente no perfil do usuário.' });
+        }
+
+        // 2. Encontrar ou criar cliente no Asaas
+        let customerId;
+        const findCustomerResponse = await asaasAPI(`/customers?cpfCnpj=${cleanCpf}`);
+        const findCustomerData = await findCustomerResponse.json();
+
+        if (findCustomerResponse.ok && findCustomerData.data && findCustomerData.data.length > 0) {
+            customerId = findCustomerData.data[0].id;
+        } else {
+            const customerPayload = {
+                name: userData.nome,
+                email: userData.email,
+                cpfCnpj: cleanCpf,
+                phone: userData.telefone?.replace(/\D/g, '') || '',
+            };
+            const createCustomerResponse = await asaasAPI('/customers', 'POST', customerPayload);
+            const createCustomerData = await createCustomerResponse.json();
+            if (!createCustomerResponse.ok) {
+                console.error('Erro ao criar cliente Asaas para anúncio:', createCustomerData);
+                return res.status(400).json({ error: 'Erro ao registrar cliente no sistema de pagamentos.', details: createCustomerData.errors });
+            }
+            customerId = createCustomerData.id;
+        }
+
+        // 3. Criar a cobrança PIX no Asaas
+        const paymentPayload = {
+            customer: customerId,
+            billingType: 'PIX',
+            value: budget,
+            dueDate: new Date().toISOString().split('T')[0],
+            description: `Pagamento de campanha no BoraComer (ID: ${adId})`
+        };
+
+        const paymentResponse = await asaasAPI('/payments', 'POST', paymentPayload);
+        const paymentData = await paymentResponse.json();
+
+        if (!paymentResponse.ok) {
+            console.error('Erro da API Asaas ao criar pagamento de anúncio:', paymentData);
+            return res.status(400).json({ error: 'Erro ao criar a cobrança.', details: paymentData.errors });
+        }
+
+        // 5. Buscar o QR Code para a cobrança PIX criada
+        const getQrCodeResponse = await asaasAPI(`/payments/${paymentData.id}/pixQrCode`);
+        const qrCodeData = await getQrCodeResponse.json();
+
+        if (!getQrCodeResponse.ok) {
+            return res.status(400).json({ error: 'Cobrança criada, mas falha ao obter QR Code.', details: qrCodeData.errors });
+        }
+
+        // 6. Retornar os dados completos para o cliente
+        const fullPaymentData = {
+            ...paymentData,
+            pixQrCode: qrCodeData,
+            id: paymentData.id // Garante que o ID do pagamento esteja no nível raiz
+        };
+        res.json(fullPaymentData);
+
+    } catch (error) {
+        console.error('Erro interno no servidor (/api/create-ad-payment):', error);
+        res.status(500).json({ error: 'Erro interno no servidor', details: error.message });
+    }
+});
+
+
 // ========================
 // ROTA DA API: Consultar Status do Pagamento (sem alterações)
 // ========================

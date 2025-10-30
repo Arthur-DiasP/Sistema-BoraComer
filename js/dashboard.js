@@ -43,10 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     module = await import('./dashboard-cupom.js'); 
                     if (module && typeof module.initPromocionais === 'function') {
                         await module.initPromocionais();
-                        loadedModules.add(sectionId);
+                        // Não adiciona a loadedModules para permitir recarregar se necessário, ou ajusta a lógica
+                        // Por enquanto, vamos adicionar para consistência.
+                        loadedModules.add(sectionId); 
                     }
                     return; // Retorna para evitar a chamada do `init()` padrão
-                case 'parceiros': module = await import('./dashboard-parceiros.js'); break; // Renomeado para Anunciantes na UI
+                case 'anunciantes-locais': module = await import('./dashboard-parceiros.js'); break;
+                case 'campanhas-usuarios': module = await import('./dashboard-anunciantes.js'); break;
                 case 'jogo': module = await import('./dashboard-jogo.js'); break;
                 case 'indicacoes': module = await import('./dashboard-indicacoes.js'); break;
                 case 'logistica': module = await import('./dashboard-logistica.js'); break;
