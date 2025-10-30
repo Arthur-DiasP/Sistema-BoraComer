@@ -252,12 +252,11 @@ app.post('/webhook/asaas', async (req, res) => {
                 // 🎯 MUDANÇA 7: LOGS DE CONFIRMAÇÃO CONDICIONAIS
                 if (!isProduction) {
                     console.log(`✅ Pagamento ${payment.id} recebido/confirmado! Status do pedido precisa ser alterado no DB.`);
+                    simulateUserNotification(
+                        payment.id,
+                        `Seu pagamento de R$ ${payment.value} foi confirmado! Seu pedido está sendo preparado. 🍕`
+                    );
                 }
-                
-                simulateUserNotification(
-                    payment.id,
-                    `Seu pagamento de R$ ${payment.value} foi confirmado! Seu pedido está sendo preparado. 🍕`
-                );
                 notifyClient(payment.id, payment.status); // Notifica o cliente via WebSocket
 
                 break;
@@ -271,6 +270,7 @@ app.post('/webhook/asaas', async (req, res) => {
                     if (!isProduction) {
                         console.log(`⏳ Pagamento ${payment.id} ainda pendente (CREATED com status PENDING).`);
                     }
+                    // A notificação para o cliente é importante mesmo em produção para o WebSocket funcionar
                     notifyClient(payment.id, payment.status); // Notifica o cliente que está pendente
                 }
                 break;
