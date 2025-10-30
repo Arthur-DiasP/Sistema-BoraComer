@@ -1176,3 +1176,30 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
         padding-bottom: 15vh;
     }
 }
+
+/* ===============================================
+   AJUSTES RESPONSIVOS PARA A PÁGINA DE PERFIL
+   =============================================== */
+@media (max-width: 768px) {
+    
+    /* Garante que a página não tenha rolagem horizontal */
+    .app-page {
+        overflow-x: hidden;
+    }
+
+    /* Altera o container dos cards para um layout de coluna */
+    .balances-summary {
+        flex-direction: column; /* Empilha os cards verticalmente */
+        gap: 12px;              /* Adiciona um espaço entre os cards empilhados */
+    }
+
+    /* Ajusta o tamanho dos cards para o novo layout */
+    .balance-card {
+        width: 100%; 
+    }
+
+    /* Opcional: Reduz um pouco o espaçamento interno nos cards para telas bem pequenas */
+    .balance-card .balance-info {
+        padding: 0 12px;
+    }
+}
