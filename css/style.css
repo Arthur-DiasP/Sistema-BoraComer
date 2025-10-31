@@ -1176,6 +1176,189 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 }
 
 /* ============================================= */
+/*       PÁGINA DO JOGO (Layout de Card)         */
+/* ============================================= */
+.game-campaign-card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.game-card {
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.game-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #434343 100%);
+    color: #fff;
+}
+.game-card-header .material-icons {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+.game-card-header h3 {
+    font-size: 1.3rem;
+    margin: 0;
+}
+.game-card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+.game-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.game-cost { font-size: 1.2rem; font-weight: 700; color: var(--accent-color); }
+
+/* ============================================= */
+/*       PÁGINA DO JOGO (jogo.html)              */
+/* ============================================= */
+.game-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1rem;
+    min-height: 50vh;
+    color: var(--text-muted-color);
+}
+.game-state-container .material-icons {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+.game-state-container h2 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.game-campaign-card {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #434343 100%);
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+.game-campaign-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.game-campaign-header .material-icons {
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+.game-campaign-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+.game-campaign-header p {
+    margin: 0;
+    opacity: 0.8;
+}
+.game-campaign-rules {
+    text-align: center;
+    font-weight: 500;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.game-board-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.game-status-display {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    background-color: var(--background-color);
+    border-radius: 50px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.tic-tac-toe-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 1.5rem auto;
+}
+.cell {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.cell:hover { background-color: #e0e0e0; }
+.tic-tac-toe-board.locked .cell { cursor: not-allowed; }
+.game-actions { display: flex; gap: 1rem; width: 100%; max-width: 300px; }
+.game-actions .btn { flex: 1; }
+
+/* Efeito de pulsação para o botão principal do jogo */
+.game-actions .btn-primary {
+    animation: pulse-primary 2s infinite;
+}
+
+.game-view-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    justify-content: center;
+}
+
+.game-view-header .btn-icon {
+    position: absolute;
+    left: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted-color);
+}
+
+.game-view-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+@keyframes pulse-primary {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 32, 39, 0.4); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(217, 32, 39, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 32, 39, 0); }
+}
+
+/* ============================================= */
 /*       22. MENSAGEM DE CARRINHO VAZIO          */
 /* ============================================= */
 .empty-cart-message-container { text-align: center; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100vh - var(--nav-height) - 100px); }
@@ -1384,3 +1567,118 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
         padding: 0 12px;
     }
 }
+
+/* ============================================= */
+/*       TABS PARA ANUNCIE.HTML                */
+/* ============================================= */
+.tabs-container {
+    width: 100%;
+}
+
+.tabs-nav {
+    display: flex;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.tab-link {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--text-muted-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-link.active {
+    background-color: var(--surface-color);
+    color: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ============================================= */
+/*       LISTA DE ANÚNCIOS DO USUÁRIO          */
+/* ============================================= */
+#user-ads-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-ad-card {
+    display: flex;
+    gap: 1rem;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--border-color);
+}
+
+.ad-card-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.ad-card-body {
+    flex-grow: 1;
+}
+
+.ad-card-body h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+.ad-card-body p {
+    font-size: 0.9rem;
+    color: var(--text-muted-color);
+    margin: 0.25rem 0;
+}
+
+.ad-card-status {
+    margin-top: 0.75rem;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+}
+
+.status-pendente .status-badge {
+    background-color: #fff8e1;
+    color: #f57f17;
+}
+
+.status-ativo .status-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-reprovado .status-badge, .status-pausado .status-badge {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.user-ad-card.status-pendente { border-left-color: #f57f17; }
+.user-ad-card.status-ativo { border-left-color: #2e7d32; }
+.user-ad-card.status-reprovado, .user-ad-card.status-pausado { border-left-color: #c62828; }

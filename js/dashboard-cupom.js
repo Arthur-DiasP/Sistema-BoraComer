@@ -208,68 +208,68 @@ const populatePromocionaisFormForEdit = (id) => {
 /**
  * Função de inicialização para o módulo de "Cupom Mágico".
  */
-export function init() {
-    gameForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = gameCampaignIdInput.value;
+export function init() { // A função init do jogo foi desativada, mas mantida para referência.
+    // gameForm.addEventListener('submit', async (e) => {
+    //     e.preventDefault();
+    //     const id = gameCampaignIdInput.value;
 
-        const campaignData = {
-            nome: document.getElementById('campaign-name').value,
-            descricao: document.getElementById('campaign-description').value,
-            desconto: parseInt(document.getElementById('campaign-discount').value, 10),
-            dataInicio: document.getElementById('campaign-startDate').value,
-            dataFim: document.getElementById('campaign-endDate').value,
-            tentativas: parseInt(document.getElementById('campaign-attempts').value, 10),
-            chances: parseInt(document.getElementById('campaign-chances').value, 10),
-            ativa: document.getElementById('campaign-status').value === 'true',
-        };
+    //     const campaignData = {
+    //         nome: document.getElementById('campaign-name').value,
+    //         descricao: document.getElementById('campaign-description').value,
+    //         desconto: parseInt(document.getElementById('campaign-discount').value, 10),
+    //         dataInicio: document.getElementById('campaign-startDate').value,
+    //         dataFim: document.getElementById('campaign-endDate').value,
+    //         tentativas: parseInt(document.getElementById('campaign-attempts').value, 10),
+    //         chances: parseInt(document.getElementById('campaign-chances').value, 10),
+    //         ativa: document.getElementById('campaign-status').value === 'true',
+    //     };
 
-        if (new Date(campaignData.dataFim) < new Date(campaignData.dataInicio)) {
-            alert("A data de fim não pode ser anterior à data de início.");
-            return;
-        }
+    //     if (new Date(campaignData.dataFim) < new Date(campaignData.dataInicio)) {
+    //         alert("A data de fim não pode ser anterior à data de início.");
+    //         return;
+    //     }
 
-        try {
-            if (id) {
-                await updateDoc(doc(firestore, 'cupons', id), campaignData);
-                alert('Campanha atualizada com sucesso!');
-            } else {
-                await addDoc(collection(firestore, 'cupons'), campaignData);
-                alert('Campanha criada com sucesso!');
-            }
-            resetGameForm();
-            await fetchAndRenderGameCampaigns();
-        } catch (error) {
-            console.error("Erro ao salvar campanha:", error);
-            alert("Ocorreu um erro ao salvar a campanha.");
-        }
-    });
+    //     try {
+    //         if (id) {
+    //             await updateDoc(doc(firestore, 'cupons', id), campaignData);
+    //             alert('Campanha atualizada com sucesso!');
+    //         } else {
+    //             await addDoc(collection(firestore, 'cupons'), campaignData);
+    //             alert('Campanha criada com sucesso!');
+    //         }
+    //         resetGameForm();
+    //         await fetchAndRenderGameCampaigns();
+    //     } catch (error) {
+    //         console.error("Erro ao salvar campanha:", error);
+    //         alert("Ocorreu um erro ao salvar a campanha.");
+    //     }
+    // });
 
-    gameTableBody.addEventListener('click', async (e) => {
-        const row = e.target.closest('tr');
-        if (!row) return;
-        const id = row.dataset.id;
+    // gameTableBody.addEventListener('click', async (e) => {
+    //     const row = e.target.closest('tr');
+    //     if (!row) return;
+    //     const id = row.dataset.id;
 
-        if (e.target.closest('.edit-btn')) {
-            populateGameFormForEdit(id);
-        }
+    //     if (e.target.closest('.edit-btn')) {
+    //         populateGameFormForEdit(id);
+    //     }
 
-        if (e.target.closest('.delete-btn')) {
-            if (confirm('Tem certeza que deseja excluir esta campanha? Esta ação não pode ser desfeita.')) {
-                try {
-                    await deleteDoc(doc(firestore, 'cupons', id));
-                    alert('Campanha excluída com sucesso.');
-                    await fetchAndRenderGameCampaigns();
-                } catch (error) {
-                    console.error("Erro ao excluir campanha:", error);
-                    alert("Ocorreu um erro ao excluir a campanha.");
-                }
-            }
-        }
-    });
+    //     if (e.target.closest('.delete-btn')) {
+    //         if (confirm('Tem certeza que deseja excluir esta campanha? Esta ação não pode ser desfeita.')) {
+    //             try {
+    //                 await deleteDoc(doc(firestore, 'cupons', id));
+    //                 alert('Campanha excluída com sucesso.');
+    //                 await fetchAndRenderGameCampaigns();
+    //             } catch (error) {
+    //                 console.error("Erro ao excluir campanha:", error);
+    //                 alert("Ocorreu um erro ao excluir a campanha.");
+    //             }
+    //         }
+    //     }
+    // });
 
-    gameClearFormBtn.addEventListener('click', resetGameForm);
-    fetchAndRenderGameCampaigns();
+    // gameClearFormBtn.addEventListener('click', resetGameForm);
+    // fetchAndRenderGameCampaigns();
 }
 
 /**

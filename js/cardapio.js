@@ -80,15 +80,51 @@ function startSlider(numSlides) {
     }
 }
 
-function listenToBanners() {
-    onSnapshot(collection(firestore, 'banners'), (snapshot) => {
-        renderBanners(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-        console.error("Erro ao buscar banners:", error);
-        if (bannerContainer) bannerContainer.style.display = 'none';
-    });
-}
+/**
+ * Busca tanto os banners de admin quanto as campanhas de usuários ativas
+ * e as exibe no carrossel da página principal.
+ */
+async function loadAllBanners() {
+    if (!bannerContainer) return;
 
+    try {
+        // 1. Buscar banners de admin (coleção 'banners')
+        const adminBannersQuery = query(collection(firestore, 'banners'));
+        const adminBannersSnapshot = await getDocs(adminBannersQuery);
+        const adminBanners = adminBannersSnapshot.docs.map(doc => doc.data());
+
+        // 2. Buscar campanhas de usuários ativas (coleção 'anunciosUsuarios')
+        const userCampaignsQuery = query(
+            collection(firestore, 'anunciosUsuarios'),
+            where('status', '==', 'ativo') // AQUI ESTÁ A MÁGICA!
+        );
+        const userCampaignsSnapshot = await getDocs(userCampaignsQuery);
+        
+        // Mapeia para um formato compatível com o que os banners de admin usam
+        const userCampaigns = userCampaignsSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                mediaUrl: data.imagemUrl, // Usamos a imagem da campanha
+                linkUrl: data.videoUrl || '#', // Se tiver vídeo, pode ser usado como link, ou pode ser adaptado
+                mediaType: 'image' // Assumimos que são imagens por enquanto
+            };
+        });
+
+        // 3. Juntar os dois tipos de anúncios e embaralhar
+        const allBanners = [...adminBanners, ...userCampaigns];
+        allBanners.sort(() => Math.random() - 0.5);
+
+        if (allBanners.length > 0) {
+            renderBanners(allBanners);
+        } else {
+            if (bannerContainer) bannerContainer.style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error("Erro ao carregar banners e campanhas:", error);
+        if (bannerContainer) bannerContainer.style.display = 'none';
+    }
+}
 // --- LÓGICA DO CARROSSEL DE ANUNCIANTES ---
 const advertiserSection = document.getElementById('advertiser-section');
 const advertiserSlidesContainer = document.querySelector('.advertiser-slides');
@@ -461,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalAdditionalOptions.addEventListener('change', updateModalPrice);
 
     // --- INICIALIZAÇÃO ---
-    listenToBanners();
+    loadAllBanners(); // Substituímos a função antiga pela nova
     listenToAdvertisers(); // Escuta por anúncios de parceiros
     listenToPersonalizationConfig();
     listenToProducts();

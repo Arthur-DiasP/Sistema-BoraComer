@@ -2,9 +2,13 @@
 
 // Importa as funções necessárias do Firebase
 import { firestore } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Seletores de Tabs ---
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
     // --- Seletores do Formulário ---
     const form = document.getElementById('anuncio-form');
     const budgetSlider = document.getElementById('budget-slider');
@@ -30,7 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const pixQrContainer = document.getElementById('pix-qr-code-container');
     const pixCopyPasteInput = document.getElementById('pix-copy-paste-code');
 
+    // --- Seletores da Lista de Anúncios ---
+    const userAdsList = document.getElementById('user-ads-list');
+
     const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
+    // --- Lógica de Tabs ---
+    tabLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const tabName = link.getAttribute('data-tab');
+
+            tabLinks.forEach(l => l.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            link.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'meus-anuncios') {
+                displayUserAds();
+            }
+        });
+    });
 
     // --- Lógica do Slider de Orçamento ---
     const updateTierInfo = (value) => {
@@ -180,6 +204,52 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Ir para Pagamento';
         }
     });
+
+    // --- Lógica para Exibir Anúncios do Usuário ---
+    async function displayUserAds() {
+        const userId = sessionStorage.getItem('userId');
+        if (!userId) {
+            userAdsList.innerHTML = '<p>Você precisa estar logado para ver seus anúncios.</p>';
+            return;
+        }
+
+        userAdsList.innerHTML = '<div class="spinner"></div>'; // Mostra um spinner enquanto carrega
+
+        try {
+            const q = query(collection(firestore, "anunciosUsuarios"), where("userId", "==", userId));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                userAdsList.innerHTML = '<p>Você ainda não tem anúncios. Crie um na aba "Anunciar"!</p>';
+                return;
+            }
+
+            let adsHtml = '';
+            querySnapshot.forEach((doc) => {
+                const ad = doc.data();
+                const createdAt = ad.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Data indisponível';
+                adsHtml += `
+                    <div class="user-ad-card status-${ad.status}">
+                        <img src="${ad.imagemUrl}" alt="${ad.nome}" class="ad-card-image">
+                        <div class="ad-card-body">
+                            <h4>${ad.nome}</h4>
+                            <p><strong>Criado em:</strong> ${createdAt}</p>
+                            <p><strong>Orçamento:</strong> ${formatCurrency(ad.budget)}</p>
+                            <div class="ad-card-status">
+                                <strong>Status:</strong> <span class="status-badge">${ad.status.charAt(0).toUpperCase() + ad.status.slice(1)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            userAdsList.innerHTML = adsHtml;
+
+        } catch (error) {
+            console.error("Erro ao buscar anúncios do usuário:", error);
+            userAdsList.innerHTML = '<p class="error-message">Ocorreu um erro ao carregar seus anúncios. Tente novamente mais tarde.</p>';
+        }
+    }
 
     // --- Lógica do Modal de Termos ---
     openTermsModalBtn.addEventListener('click', (e) => {

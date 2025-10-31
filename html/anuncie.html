@@ -20,104 +20,123 @@
     </header>
 
     <main class="container">
-        <form id="anuncio-form" class="anuncio-form-container">
-            <!-- Seção 1: Sobre o Anúncio -->
-            <div class="card anuncio-step">
-                <div class="anuncio-step-header">
-                    <div class="step-number">1</div>
-                    <h2>Sobre seu Anúncio</h2>
-                </div>
-                <div class="anuncio-step-body">
-                    <div class="form-group">
-                        <label for="anuncio-nome">Nome do Anúncio</label>
-                        <div class="input-with-icon">
-                            <i class="material-icons">label</i>
-                            <input type="text" id="anuncio-nome" placeholder="Ex: Promoção de Verão da Loja X" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>O que você vai anunciar?</label>
-                        <div class="radio-group-horizontal">
-                            <label><input type="radio" name="anuncio-tipo" value="produto" checked> Produto</label>
-                            <label><input type="radio" name="anuncio-tipo" value="empresa"> Empresa</label>
-                            <label><input type="radio" name="anuncio-tipo" value="projeto"> Projeto</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="anuncio-descricao">Descrição Curta (máx. 150 caracteres)</label>
-                        <textarea id="anuncio-descricao" rows="3" placeholder="Fale um pouco sobre o que está anunciando..." maxlength="150" required></textarea>
-                    </div>
-                </div>
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-link active" data-tab="anunciar">Anunciar</button>
+                <button class="tab-link" data-tab="meus-anuncios">Meus Anúncios</button>
             </div>
 
-            <!-- Seção 2: Mídia -->
-            <div class="card anuncio-step">
-                <div class="anuncio-step-header">
-                    <div class="step-number">2</div>
-                    <h2>Mídia do Anúncio</h2>
-                </div>
-                <div class="anuncio-step-body">
-                    <div class="form-group">
-                        <label for="anuncio-imagem-url">URL da Imagem Principal</label>
-                        <div class="input-with-icon">
-                            <i class="material-icons">image</i>
-                            <input type="url" id="anuncio-imagem-url" placeholder="https://exemplo.com/imagem.png" required>
+            <div id="anunciar" class="tab-content active">
+                <form id="anuncio-form" class="anuncio-form-container">
+                    <!-- Seção 1: Sobre o Anúncio -->
+                    <div class="card anuncio-step">
+                        <div class="anuncio-step-header">
+                            <div class="step-number">1</div>
+                            <h2>Sobre seu Anúncio</h2>
                         </div>
-                        <small class="form-hint">Sua imagem aparecerá nos banners. Use uma boa resolução (16:7).</small>
-                        <div id="image-preview-container" class="image-preview-container" style="display: none;">
-                            <p>Pré-visualização:</p>
-                            <img id="image-preview" src="" alt="Pré-visualização da imagem">
+                        <div class="anuncio-step-body">
+                            <div class="form-group">
+                                <label for="anuncio-nome">Nome do Anúncio</label>
+                                <div class="input-with-icon">
+                                    <i class="material-icons">label</i>
+                                    <input type="text" id="anuncio-nome" placeholder="Ex: Promoção de Verão da Loja X" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>O que você vai anunciar?</label>
+                                <div class="radio-group-horizontal">
+                                    <label><input type="radio" name="anuncio-tipo" value="produto" checked> Produto</label>
+                                    <label><input type="radio" name="anuncio-tipo" value="empresa"> Empresa</label>
+                                    <label><input type="radio" name="anuncio-tipo" value="projeto"> Projeto</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="anuncio-descricao">Descrição Curta (máx. 150 caracteres)</label>
+                                <textarea id="anuncio-descricao" rows="3" placeholder="Fale um pouco sobre o que está anunciando..." maxlength="150" required></textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="anuncio-video-url">URL de Vídeo (Opcional)</label>
-                        <div class="input-with-icon">
-                            <i class="material-icons">videocam</i>
-                            <input type="url" id="anuncio-video-url" placeholder="https://youtube.com/seu-video">
+
+                    <!-- Seção 2: Mídia -->
+                    <div class="card anuncio-step">
+                        <div class="anuncio-step-header">
+                            <div class="step-number">2</div>
+                            <h2>Mídia do Anúncio</h2>
                         </div>
-                        <small class="form-hint">Se preenchido, seu vídeo poderá aparecer no lugar da imagem.</small>
+                        <div class="anuncio-step-body">
+                            <div class="form-group">
+                                <label for="anuncio-imagem-url">URL da Imagem Principal</label>
+                                <div class="input-with-icon">
+                                    <i class="material-icons">image</i>
+                                    <input type="url" id="anuncio-imagem-url" placeholder="https://exemplo.com/imagem.png" required>
+                                </div>
+                                <small class="form-hint">Sua imagem aparecerá nos banners. Use uma boa resolução (16:7).</small>
+                                <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                    <p>Pré-visualização:</p>
+                                    <img id="image-preview" src="" alt="Pré-visualização da imagem">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="anuncio-video-url">URL de Vídeo (Opcional)</label>
+                                <div class="input-with-icon">
+                                    <i class="material-icons">videocam</i>
+                                    <input type="url" id="anuncio-video-url" placeholder="https://youtube.com/seu-video">
+                                </div>
+                                <small class="form-hint">Se preenchido, seu vídeo poderá aparecer no lugar da imagem.</small>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <!-- Seção 3: Orçamento -->
+                    <div class="card anuncio-step">
+                        <div class="anuncio-step-header">
+                            <div class="step-number">3</div>
+                            <h2>Defina seu Orçamento</h2>
+                        </div>
+                        <div class="budget-slider-container">
+                            <div class="budget-display">
+                                <span>Seu Investimento:</span>
+                                <strong id="budget-display-value">R$ 50,00</strong>
+                            </div>
+                            <input type="range" id="budget-slider" min="50" max="1000" step="50" value="50">
+                            <div class="budget-labels">
+                                <span>R$ 50</span>
+                                <span>R$ 1.000</span>
+                            </div>
+                            <div id="campaign-tier-info" class="campaign-tier-info">
+                                <h3>Plano Básico</h3>
+                                <p>Sua campanha ficará no ar por <strong>até 7 dias</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção 4: Finalização -->
+                    <div class="card anuncio-step">
+                        <div class="anuncio-step-header">
+                            <div class="step-number">4</div>
+                            <h2>Finalizar</h2>
+                        </div>
+                        <div class="form-group-checkbox terms-checkbox">
+                            <input type="checkbox" id="terms-checkbox" required>
+                            <label for="terms-checkbox">Li e aceito os <a href="#" id="open-terms-modal">Termos de Anúncio</a>.</label>
+                        </div>
+                        <button type="submit" id="submit-anuncio-btn" class="btn btn-primary btn-block" disabled title="Preencha todos os campos para continuar">
+                            Gerar Cobrança PIX
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <!-- Seção 3: Orçamento -->
-            <div class="card anuncio-step">
-                <div class="anuncio-step-header">
-                    <div class="step-number">3</div>
-                    <h2>Defina seu Orçamento</h2>
-                </div>
-                <div class="budget-slider-container">
-                    <div class="budget-display">
-                        <span>Seu Investimento:</span>
-                        <strong id="budget-display-value">R$ 50,00</strong>
-                    </div>
-                    <input type="range" id="budget-slider" min="50" max="1000" step="50" value="50">
-                    <div class="budget-labels">
-                        <span>R$ 50</span>
-                        <span>R$ 1.000</span>
-                    </div>
-                    <div id="campaign-tier-info" class="campaign-tier-info">
-                        <h3>Plano Básico</h3>
-                        <p>Sua campanha ficará no ar por <strong>até 7 dias</strong>.</p>
+            <div id="meus-anuncios" class="tab-content">
+                <div class="card">
+                    <h2>Meus Anúncios</h2>
+                    <div id="user-ads-list">
+                        <!-- Anúncios do usuário serão listados aqui -->
+                        <p>Você ainda não tem anúncios ativos.</p>
                     </div>
                 </div>
             </div>
-
-            <!-- Seção 4: Finalização -->
-            <div class="card anuncio-step">
-                <div class="anuncio-step-header">
-                    <div class="step-number">4</div>
-                    <h2>Finalizar</h2>
-                </div>
-                <div class="form-group-checkbox terms-checkbox">
-                    <input type="checkbox" id="terms-checkbox" required>
-                    <label for="terms-checkbox">Li e aceito os <a href="#" id="open-terms-modal">Termos de Anúncio</a>.</label>
-                </div>
-                <button type="submit" id="submit-anuncio-btn" class="btn btn-primary btn-block" disabled title="Preencha todos os campos para continuar">
-                    Gerar Cobrança PIX
-                </button>
-            </div>
-        </form>
+        </div>
     </main>
 
     <nav class="bottom-nav">

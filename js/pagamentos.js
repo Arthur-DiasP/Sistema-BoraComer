@@ -34,9 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMoneyModalBtn = document.getElementById('close-money-modal-btn');
     const confirmationOverlay = document.getElementById('confirmation-overlay');
     const closeConfirmationBtn = document.getElementById('close-confirmation-btn');
-    const freeTicketOverlay = document.getElementById('free-ticket-overlay');
-    const playNowBtn = document.getElementById('play-now-btn');
-    const playLaterBtn = document.getElementById('play-later-btn');
     const confirmationModalContent = document.getElementById('confirmation-overlay').querySelector('.confirmation-body');
 
     // --- Seletores e lógica da notificação de erro ---
@@ -145,15 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         closeConfirmationBtn.addEventListener('click', () => window.location.href = 'perfil.html');
-
-        playNowBtn.addEventListener('click', () => {
-            window.location.href = 'jogo.html';
-        });
-    
-        playLaterBtn.addEventListener('click', () => {
-            freeTicketOverlay.classList.remove('visible');
-            confirmationOverlay.classList.add('visible');
-        });
     }
 
     function handlePaymentSelection(event) {
@@ -282,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Erro de comunicação com o servidor:", error);
-            showPaymentError('Erro de Conexão', 'Não foi possível conectar ao servidor de pagamentos. Verifique sua rede.');
+            // showPaymentError('Erro de Conexão', 'Não foi possível conectar ao servidor de pagamentos. Verifique sua rede.');
         }
     }
 
@@ -415,11 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('close-confirmation-btn').addEventListener('click', () => window.location.href = 'perfil.html');
             }
 
-            if (orderTotal > 50) {
-                freeTicketOverlay.classList.add('visible');
-            } else {
-                confirmationOverlay.classList.add('visible');
-            }
+            confirmationOverlay.classList.add('visible');
 
         } catch (error) {
             console.error("Erro ao finalizar o pedido:", error);
@@ -459,11 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             updates.firstPurchaseDiscountUsed = true;
-        }
-
-        // 2. Concede FICHA GRÁTIS para o Jogo da Velha
-        if (orderTotal > 50) {
-            updates.gameTickets = increment(1);
         }
 
         // Aplica todas as atualizações de uma só vez

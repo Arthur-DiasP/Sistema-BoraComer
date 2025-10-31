@@ -88,7 +88,6 @@ if (loginForm) {
                         referralCredit: userData.referralCredit || 0,
                         cashbackBalance: userData.cashbackBalance || 0,
                         firstPurchaseDiscountUsed: userData.firstPurchaseDiscountUsed || false,
-                        gameTickets: userData.gameTickets || 0
                     };
 
                     sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
@@ -230,12 +229,9 @@ if (cadastroForm) {
                 email: email,
                 dataNascimento: dataNascimento,
                 senha: senha,
-                gameChances: 2,
                 // NOVOS CAMPOS PARA O ECOSSISTEMA
                 referralCredit: 0,
                 cashbackBalance: 0,
-                gameTickets: 0,
-                firstPurchaseDiscountUsed: false,
                 successfulReferrals: []
             };
             

@@ -55,8 +55,8 @@
                     <li class="nav-divider"><span>Monetização</span></li>
                     <li><a href="#" class="nav-link" data-target="anunciantes-locais"><i class="material-icons">storefront</i><span>Anunciantes Locais</span></a></li>
                     <li><a href="#" class="nav-link" data-target="campanhas-usuarios"><i class="material-icons">group</i><span>Campanhas de Usuários</span></a></li>
-                    <li><a href="#" class="nav-link" data-target="jogo"><i class="material-icons">sports_esports</i><span>Jogo Premiado</span></a></li>
                     <li><a href="#" class="nav-link" data-target="indicacoes"><i class="material-icons">group_add</i><span>Indicações</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="chatbot"><i class="material-icons">smart_toy</i><span>Chatbot</span></a></li>
                     
                     <li class="nav-divider"><span>Configurações</span></li>
                     <li><a href="#" class="nav-link" data-target="logistica"><i class="material-icons">local_shipping</i><span>Logística</span></a></li>
@@ -577,68 +577,6 @@
                 </div>
             </section>
             
-            <!-- ====== Seção Jogo Premiado ====== -->
-            <section id="section-jogo" class="content-section">
-                <div class="cardapio-management-grid">
-                    <div class="product-form-container card">
-                        <h2 id="game-campaign-form-title">Criar Campanha de Jogo</h2>
-                        <form id="game-campaign-form">
-                            <input type="hidden" id="game-campaign-id">
-                            <div class="form-group">
-                                <label for="game-campaign-name">Nome da Campanha</label>
-                                <input type="text" id="game-campaign-name" placeholder="Ex: Sorteio do Fim de Semana" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="game-campaign-prize">Descrição do Prêmio</label>
-                                <input type="text" id="game-campaign-prize" placeholder="Ex: 1 Combo Família (Pizza G + Refri 2L)" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="game-campaign-cost">Custo para Jogar (R$)</label>
-                                <input type="number" step="0.01" id="game-campaign-cost" placeholder="Deixe 0 para ser grátis" required>
-                            </div>
-                            <div class="address-row">
-                                <div class="form-group">
-                                    <label for="game-campaign-start">Início da Campanha</label>
-                                    <input type="datetime-local" id="game-campaign-start" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="game-campaign-end">Fim da Campanha</label>
-                                    <input type="datetime-local" id="game-campaign-end" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="game-campaign-status">Status</label>
-                                <select id="game-campaign-status" required>
-                                    <option value="true" selected>Ativa</option>
-                                    <option value="false">Inativa</option>
-                                </select>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">Salvar Campanha</button>
-                                <button type="button" id="clear-game-campaign-form-btn" class="btn btn-secondary">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="product-list-container">
-                        <div class="list-header"><h2>Minhas Campanhas de Jogo</h2></div>
-                        <div class="table-wrapper">
-                            <table class="product-table">
-                                <thead>
-                                    <tr>
-                                        <th>Campanha</th>
-                                        <th>Período</th>
-                                        <th>Prêmio</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="game-campaigns-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- ====== Seção Indicações ====== -->
             <section id="section-indicacoes" class="content-section">
                  <div class="card">
@@ -659,6 +597,46 @@
                                 <tr><td colspan="5">Buscando dados...</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====== Seção Chatbot ====== -->
+            <section id="section-chatbot" class="content-section">
+                <div class="card">
+                    <h2>Conecte seu WhatsApp ao Chatbot</h2>
+                    <p>Siga os passos abaixo para ativar o chatbot de atendimento automático no número de WhatsApp da sua empresa. O QR Code expira em poucos minutos.</p>
+                    
+                    <div class="chatbot-container">
+                        <div class="chatbot-qrcode-wrapper">
+                            <div id="chatbot-qrcode-container" class="chatbot-qrcode">
+                                <!-- QR Code será inserido aqui pelo JS -->
+                                <div class="spinner-large"></div>
+                            </div>
+                            
+                            <!-- NOVO: Conexão com código manual -->
+                            <div class="chatbot-manual-code-wrapper">
+                                <h4>Ou conecte com um código</h4>
+                                <p>Se a câmera não funcionar, insira o código abaixo no seu celular.</p>
+                                <div id="chatbot-manual-code" class="chatbot-manual-code">
+                                    <div class="spinner-small"></div>
+                                </div>
+                            </div>
+
+                            <div class="chatbot-actions">
+                                <button id="generate-qr-btn" class="btn btn-secondary"><i class="material-icons">refresh</i> Gerar Novo QR Code</button>
+                            </div>
+                        </div>
+                        <div class="chatbot-instructions">
+                            <h3>Como Conectar:</h3>
+                            <ol>
+                                <li>Abra o <strong>WhatsApp</strong> no celular que você usa para o atendimento.</li>
+                                <li>Toque no menu (três pontinhos) ou em <strong>Configurações</strong> e selecione <strong>"Aparelhos Conectados"</strong>.</li>
+                                <li>Toque no botão <strong>"Conectar um aparelho"</strong>.</li>
+                                <li>Escolha entre escanear o <strong>QR Code</strong> ou selecionar a opção <strong>"Conectar com número de telefone"</strong> para inserir o código de 8 dígitos.</li>
+                                <li>Pronto! O chatbot estará ativo.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -693,35 +671,6 @@
                 </div>
             </div>
             
-            <!-- Modal para visualizar participantes e sortear (Jogo) -->
-            <div class="modal-overlay" id="participants-modal-overlay">
-                <div class="modal-content large">
-                    <button class="close-modal-btn" id="close-participants-modal-btn" aria-label="Fechar">&times;</button>
-                    <h2 id="participants-modal-title">Participantes da Campanha</h2>
-                    <div class="table-wrapper" style="margin-top: 1.5rem;">
-                        <table class="product-table">
-                            <thead>
-                                <tr>
-                                    <th>Nome do Cliente</th>
-                                    <th>Tipo de Entrada</th>
-                                    <th>Data</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participants-table-body"></tbody>
-                        </table>
-                    </div>
-                    <div class="draw-section">
-                        <button id="draw-winner-btn" class="btn btn-primary" disabled>Realizar Sorteio</button>
-                        <div id="winner-display" class="winner-display-box" style="display: none;">
-                            <h4>Vencedor Sorteado!</h4>
-                            <p><strong>Nome:</strong> <span id="winner-name"></span></p>
-                            <p><strong>Cupom Gerado:</strong> <strong id="winner-coupon-code" class="winner-coupon"></strong></p>
-                            <small>Um cupom de 100% de desconto foi criado para o vencedor.</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Modal para Lista de Compras -->
             <div class="modal-overlay" id="shopping-list-modal">
                 <div class="modal-content large">

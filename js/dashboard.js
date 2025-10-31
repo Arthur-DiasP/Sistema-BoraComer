@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'entregadores': module = await import('./dashboard-entregadores.js'); break;
                 case 'anuncios': module = await import('./dashboard-anuncios.js'); break;
                 case 'avisos': module = await import('./dashboard-avisos.js'); break;
-                case 'cupom': module = await import('./dashboard-cupom.js'); break;
                 case 'cupons-promocionais': 
                     // Caso especial: carrega o mesmo módulo de cupom, mas chama uma função de inicialização diferente.
                     module = await import('./dashboard-cupom.js'); 
@@ -48,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         loadedModules.add(sectionId); 
                     }
                     return; // Retorna para evitar a chamada do `init()` padrão
-                case 'anunciantes-locais': module = await import('./dashboard-parceiros.js'); break;
-                case 'campanhas-usuarios': module = await import('./dashboard-anunciantes.js'); break;
-                case 'jogo': module = await import('./dashboard-jogo.js'); break;
+            case 'anunciantes-locais': module = await import('./dashboard-parceiros.js'); break;
+            case 'chatbot': module = await import('./dashboard-chatbot.js'); break;
+            case 'campanhas-usuarios': module = await import('./dashboard-anunciantes.js'); break;
                 case 'indicacoes': module = await import('./dashboard-indicacoes.js'); break;
                 case 'logistica': module = await import('./dashboard-logistica.js'); break;
                 case 'calendario': module = await import('./dashboard-calendario.js'); break;
