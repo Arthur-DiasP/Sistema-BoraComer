@@ -10,16 +10,36 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 
 // ==========================================================
-// 🎯 MUDANÇA 1: BLOCO PARA SILENCIAR LOGS EM PRODUÇÃO (RENDER)
+// BLOCO PARA SILENCIAR LOGS EM PRODUÇÃO OU POR FLAG (Render)
+// - Defina NODE_ENV=production para comportamento silencioso por default
+// - Ou defina SUPPRESS_LOGS=true para forçar supressão mesmo em dev
 // ==========================================================
 const isProduction = process.env.NODE_ENV === 'production';
+const suppressLogs = process.env.SUPPRESS_LOGS === 'true' || isProduction;
 
-if (isProduction) {
-    // Sobrescreve console.log e console.info para que não façam nada em produção.
-    // MANTEMOS console.error ativo para ver erros críticos.
-    console.log = function() {};
-    console.info = function() {};
-    console.debug = function() {};
+if (suppressLogs) {
+    // Silencia logs verbosos. Mantemos console.error para erros críticos.
+    console.log = () => {};
+    console.info = () => {};
+    console.debug = () => {};
+
+    // Algumas bibliotecas escrevem diretamente em stdout — opcionalmente suprimimos.
+    // Aqui deixamos uma filtragem simples: se a linha conter 'ERROR' deixamos passar,
+    // caso contrário descartamos para evitar a "tela preta" com muitos logs no Render.
+    try {
+        const origStdoutWrite = process.stdout.write.bind(process.stdout);
+        process.stdout.write = (chunk, encoding, cb) => {
+            try {
+                const str = typeof chunk === 'string' ? chunk : chunk && chunk.toString && chunk.toString();
+                if (str && str.includes('ERROR')) return origStdoutWrite(chunk, encoding, cb);
+            } catch (e) {
+                // noop
+            }
+            return true; // indica sucesso sem escrever
+        };
+    } catch (e) {
+        // Em alguns ambientes process.stdout pode ser não-mutável — ignoramos.
+    }
 }
 // ==========================================================
 
@@ -308,6 +328,9 @@ app.post('/webhook/asaas', async (req, res) => {
 // ========================
 // Roteamento para arquivos estáticos (sem alterações)
 // ========================
+// Health check para hosting (Render, Heroku, etc.)
+app.get('/health', (req, res) => res.status(200).send('OK'));
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
