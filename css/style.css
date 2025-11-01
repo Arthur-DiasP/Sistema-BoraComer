@@ -1682,3 +1682,33 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 .user-ad-card.status-pendente { border-left-color: #f57f17; }
 .user-ad-card.status-ativo { border-left-color: #2e7d32; }
 .user-ad-card.status-reprovado, .user-ad-card.status-pausado { border-left-color: #c62828; }
+
+/* Rodapé do card com ações */
+.ad-card-footer {
+    display: flex;
+    justify-content: flex-end; /* Alinha o botão à direita */
+    margin-top: auto; /* Empurra para o final do card */
+    padding-top: 8px;
+}
+
+/* Estilo para botões de ícone dentro do rodapé */
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilo específico para o botão de excluir */
+.delete-ad-btn {
+    color: var(--text-muted-color); /* Cor padrão sutil */
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.delete-ad-btn:hover {
+    color: var(--danger-color); /* Vermelho ao passar o mouse */
+    transform: scale(1.1); /* Efeito de zoom sutil */
+}

@@ -2,7 +2,7 @@
 
 // Importa as funções necessárias do Firebase
 import { firestore } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Seletores de Tabs ---
@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 descricao: document.getElementById('anuncio-descricao').value,
                 imagemUrl: document.getElementById('anuncio-imagem-url').value,
                 videoUrl: document.getElementById('anuncio-video-url').value || '',
+                linkUrl: document.getElementById('anuncio-link-url').value || '', // Adicionado
                 budget: parseFloat(budgetSlider.value),
                 status: 'pendente',
                 createdAt: serverTimestamp(),
@@ -227,14 +228,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let adsHtml = '';
             querySnapshot.forEach((doc) => {
                 const ad = doc.data();
+                const adId = doc.id;
                 const createdAt = ad.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Data indisponível';
                 adsHtml += `
-                    <div class="user-ad-card status-${ad.status}">
+                    <div class="user-ad-card status-${ad.status}" data-id="${adId}">
                         <img src="${ad.imagemUrl}" alt="${ad.nome}" class="ad-card-image">
                         <div class="ad-card-body">
                             <h4>${ad.nome}</h4>
                             <p><strong>Criado em:</strong> ${createdAt}</p>
                             <p><strong>Orçamento:</strong> ${formatCurrency(ad.budget)}</p>
+                            <div class="ad-card-footer">
+                                <button class="btn-icon delete-ad-btn" title="Excluir Anúncio Permanentemente"><i class="material-icons">delete_forever</i></button>
+                            </div>
                             <div class="ad-card-status">
                                 <strong>Status:</strong> <span class="status-badge">${ad.status.charAt(0).toUpperCase() + ad.status.slice(1)}</span>
                             </div>
@@ -250,6 +255,26 @@ document.addEventListener('DOMContentLoaded', () => {
             userAdsList.innerHTML = '<p class="error-message">Ocorreu um erro ao carregar seus anúncios. Tente novamente mais tarde.</p>';
         }
     }
+
+    // --- Lógica para Excluir Anúncio ---
+    userAdsList.addEventListener('click', async (e) => {
+        const deleteButton = e.target.closest('.delete-ad-btn');
+        if (!deleteButton) return;
+
+        const adCard = deleteButton.closest('.user-ad-card');
+        const adId = adCard.dataset.id;
+
+        if (confirm('Tem certeza que deseja excluir este anúncio permanentemente? Esta ação não pode ser desfeita.')) {
+            try {
+                await deleteDoc(doc(firestore, 'anunciosUsuarios', adId));
+                alert('Anúncio excluído com sucesso!');
+                displayUserAds(); // Atualiza a lista de anúncios
+            } catch (error) {
+                console.error("Erro ao excluir anúncio:", error);
+                alert('Ocorreu um erro ao tentar excluir o anúncio. Tente novamente.');
+            }
+        }
+    });
 
     // --- Lógica do Modal de Termos ---
     openTermsModalBtn.addEventListener('click', (e) => {

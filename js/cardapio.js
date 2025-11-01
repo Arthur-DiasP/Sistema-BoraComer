@@ -105,8 +105,8 @@ async function loadAllBanners() {
             const data = doc.data();
             return {
                 mediaUrl: data.imagemUrl, // Usamos a imagem da campanha
-                linkUrl: data.videoUrl || '#', // Se tiver vídeo, pode ser usado como link, ou pode ser adaptado
-                mediaType: 'image' // Assumimos que são imagens por enquanto
+                linkUrl: data.linkUrl || null, // CORREÇÃO: Usar o linkUrl do anúncio. Se não existir, será nulo.
+                mediaType: 'image' // Assumimos que anúncios de usuários são sempre imagens.
             };
         });
 
