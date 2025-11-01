@@ -12,20 +12,36 @@ import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from 'fire
 import { initializeApp } from 'firebase/app';
 
 // Importa a configuração do Firebase (assumindo que o caminho está correto)
-import { firebaseConfig } from './js/firebase-config-server.js';
+import { firebaseConfig } from './js/firebase-config.js';
+// Carrega variáveis de ambiente o mais cedo possível
+dotenv.config();
+
 // ==========================================================
-// 🎯 MUDANÇA 1: BLOCO PARA SILENCIAR LOGS EM PRODUÇÃO (RENDER)
+// Controle de logs (production / suppress flag)
+// - Em produção (NODE_ENV=production) escondemos logs verbosos.
+// - Você também pode forçar supressão por SUPPRESS_LOGS=true.
+// - Erros (console.error) continuam sendo exibidos por padrão.
 // ==========================================================
 const isProduction = process.env.NODE_ENV === 'production';
+const suppressLogs = process.env.SUPPRESS_LOGS === 'true' || isProduction;
 
-if (isProduction) {
-    // Sobrescreve console.log e console.info para que não façam nada em produção.
-    // MANTEMOS console.error ativo para ver erros críticos.
+if (suppressLogs) {
+    // Remove logs verbosos que podem poluir a saída do Render/console
     console.log = function() {};
     console.info = function() {};
     console.debug = function() {};
+    console.warn = function() {};
+    // Opcional: suprimir writes diretas a stdout (ex.: bibliotecas que usam process.stdout.write)
+    try {
+        const origStdoutWrite = process.stdout.write.bind(process.stdout);
+        process.stdout.write = (chunk, encoding, cb) => {
+            // evita supressão de erros (keep stderr intact)
+            return true;
+        };
+    } catch (e) {
+        // ambiente sem process.stdout mutável — ignora
+    }
 }
-// ==========================================================
 
 // Inicializa o Firebase no servidor
 const firebaseApp = initializeApp(firebaseConfig);

@@ -240,6 +240,68 @@ body {
 .btn-icon { background: none; border: none; cursor: pointer; color: var(--dash-text-muted); padding: 0.25rem; transition: color 0.2s; }
 .btn-icon.edit-btn:hover { color: var(--dash-primary); }
 .btn-icon.delete-btn:hover { color: var(--dash-danger); }
+.banner-list-admin {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.banner-card-admin {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: var(--dash-surface);
+    border: 1px solid var(--dash-border);
+    border-radius: 10px;
+    padding: 0.9rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.banner-card-admin:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.banner-preview {
+    width: 220px;
+    height: 110px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fafafa, #f0f0f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.banner-preview img,
+.banner-preview video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.banner-info {
+    flex: 1;
+    min-width: 0; /* allow text truncation */
+}
+.banner-info > div { margin-bottom: 0.25rem; color: var(--dash-text-muted); font-size: 0.95rem; }
+.banner-info .banner-title { font-weight: 600; color: var(--dash-text); font-size: 1rem; margin-bottom: 0.25rem; }
+.banner-info .banner-meta { display: flex; gap: 1rem; align-items: center; font-size: 0.85rem; color: var(--dash-text-muted); }
+.banner-info .banner-dimensions { font-family: monospace; background: #f7f7f8; padding: 2px 6px; border-radius: 6px; color: var(--dash-text-muted); }
+
+.banner-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+.banner-actions .btn { padding: 0.45rem 0.7rem; border-radius: 8px; font-size: 0.9rem; }
+.banner-actions .edit-btn { background: var(--dash-primary); color: #fff; border: none; }
+.banner-actions .delete-btn { background: transparent; border: 1px solid var(--dash-border); color: var(--dash-danger); }
+.banner-actions .edit-btn:hover { opacity: 0.95; }
+
+/* Responsividade: empilha em telas pequenas */
+@media (max-width: 700px) {
+    .banner-card-admin { flex-direction: column; align-items: stretch; }
+    .banner-preview { width: 100%; height: 160px; }
+    .banner-actions { flex-direction: row; justify-content: space-between; }
+}
+
 .table-wrapper { overflow-x: auto; }
 .product-table { width: 100%; border-collapse: collapse; background-color: var(--dash-surface); }
 .product-table th, .product-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--dash-border); white-space: nowrap; }

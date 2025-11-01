@@ -1,6 +1,7 @@
 // js/motoboy-portal.js
 import { firestore } from './firebase-config.js';
 import { collection, query, where, onSnapshot, doc, updateDoc, getDoc, orderBy, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { listenCombinedAds, renderCarousel } from './ads.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loggedInMotoboy = JSON.parse(sessionStorage.getItem('loggedInMotoboy'));
@@ -125,8 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
             (error) => console.warn(`ERRO de Geolocalização: ${error.message}`),
             { enableHighAccuracy: true }
         );
-    }
-    
+        }
+
+    // Calcula distância entre duas coordenadas (metros)
     function getDistance(lat1, lon1, lat2, lon2) {
         if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
         const R = 6371e3; // Raio da Terra em metros
@@ -144,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingDeliveries.forEach(order => {
             const lat = order.endereco.coordenadas?.lat || -23.5505 + (Math.random() - 0.5) * 0.1;
             const lon = order.endereco.coordenadas?.lon || -46.6333 + (Math.random() - 0.5) * 0.1;
-            
             const marker = L.marker([lat, lon]).addTo(deliveryMarkers);
             marker.bindPopup(`<b>${order.cliente.nome}</b><br>${order.endereco.rua}, ${order.endereco.numero}`);
         });
@@ -485,78 +486,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DO CARROSSEL DE ANÚNCIOS ---
-
-    /**
-     * Busca os banners de anúncio no Firestore.
-     */
-    async function fetchBanners() {
-        try {
-            const querySnapshot = await getDocs(collection(firestore, 'banners'));
-            const banners = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            if (banners.length > 0) {
-                renderBanners(banners);
+    // Funções de suporte ao carrossel: combinamos banners do sistema + anúncios aprovados de usuários
+    function fetchBanners() {
+        listenCombinedAds((ads) => {
+            if (ads && ads.length > 0) {
+                renderCarousel(bannerSlides, bannerDots, bannerProgressBar, ads, BANNER_INTERVAL);
                 bannerContainer.style.display = 'block';
-            }
-        } catch (error) {
-            console.error("Erro ao buscar banners:", error);
-        }
-    }
-
-    /**
-     * Renderiza os banners no carrossel.
-     * @param {Array} banners - A lista de banners a serem exibidos.
-     */
-    function renderBanners(banners) {
-        bannerSlides.innerHTML = '';
-        bannerDots.innerHTML = '';
-
-        banners.forEach((banner, index) => {
-            const slide = document.createElement('div');
-            slide.className = 'banner-slide';
-            
-            const mediaElement = banner.mediaType === 'video'
-                ? `<video src="${banner.mediaUrl}" autoplay muted loop playsinline></video>`
-                : `<img src="${banner.mediaUrl}" alt="Anúncio ${index + 1}">`;
-
-            slide.innerHTML = banner.linkUrl 
-                ? `<a href="${banner.linkUrl}" target="_blank">${mediaElement}</a>` 
-                : mediaElement;
-
-            bannerSlides.appendChild(slide);
-
-            const dot = document.createElement('button');
-            dot.className = 'banner-dot';
-            dot.dataset.index = index;
-            bannerDots.appendChild(dot);
-        });
-
-        bannerDots.addEventListener('click', (e) => {
-            if (e.target.matches('.banner-dot')) {
-                const index = parseInt(e.target.dataset.index, 10);
-                showBanner(index);
+            } else {
+                bannerContainer.style.display = 'none';
             }
         });
-
-        showBanner(0); // Mostra o primeiro banner
-    }
-
-    /**
-     * Exibe um banner específico e gerencia o timer.
-     * @param {number} index - O índice do banner a ser exibido.
-     */
-    function showBanner(index) {
-        const slides = bannerSlides.querySelectorAll('.banner-slide');
-        const dots = bannerDots.querySelectorAll('.banner-dot');
-        currentBannerIndex = index % slides.length;
-
-        bannerSlides.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
-        dots.forEach((dot, i) => dot.classList.toggle('active', i === currentBannerIndex));
-
-        clearTimeout(bannerTimer);
-        bannerProgressBar.style.animation = 'none';
-        void bannerProgressBar.offsetWidth; // Força reflow para reiniciar a animação
-        bannerProgressBar.style.animation = `progressBarAnimation ${BANNER_INTERVAL / 1000}s linear forwards`;
-        bannerTimer = setTimeout(() => showBanner(currentBannerIndex + 1), BANNER_INTERVAL);
     }
 
     // --- INICIALIZAÇÃO E EVENT LISTENERS ---

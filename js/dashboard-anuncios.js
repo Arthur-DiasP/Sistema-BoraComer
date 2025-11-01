@@ -2,7 +2,7 @@
 
 // Importando as funções necessárias do Cloud Firestore
 import { firestore } from './firebase-config.js';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // --- SELETORES DO DOM ---
 const bannerForm = document.getElementById('banner-form');
@@ -52,10 +52,12 @@ const renderBannerList = (banners) => {
     banners.forEach(banner => {
         const bannerCard = document.createElement('div');
         bannerCard.className = 'banner-card-admin';
-        // Armazena todos os dados no dataset para fácil acesso na edição
-        Object.entries(banner).forEach(([key, value]) => {
-            bannerCard.dataset[key] = value;
-        });
+        // Armazena os campos relevantes no dataset usando keys consistentes (camelCase)
+        // Evita gravar objetos complexos (ex: Timestamp) diretamente no dataset.
+        bannerCard.dataset.id = banner.id || '';
+        bannerCard.dataset.mediaUrl = banner.mediaUrl || '';
+        bannerCard.dataset.linkUrl = banner.linkUrl || '';
+        bannerCard.dataset.mediaType = banner.mediaType || 'image';
 
         const mediaPreview = banner.mediaType === 'video'
             ? `<video src="${banner.mediaUrl}" muted playsinline></video>`
@@ -120,10 +122,23 @@ export function init() {
     // Event listener para o formulário de Adicionar/Editar Anúncio
     bannerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        // Cria objeto padronizado: mediaUrl, mediaType, linkUrl, durationDays, startAt, endAt, status
+        const mediaUrl = mediaUrlInput.value;
+        const mediaType = mediaTypeSelect.value || 'image';
+        const linkUrl = linkUrlInput.value || '';
+        const durationDays = 30; // padrão para banners do sistema
+        const startAt = Timestamp.fromDate(new Date());
+        const endAt = Timestamp.fromDate(new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000));
+
         const bannerData = {
-            mediaUrl: mediaUrlInput.value,
-            linkUrl: linkUrlInput.value,
-            mediaType: mediaTypeSelect.value,
+            mediaUrl,
+            mediaType,
+            linkUrl,
+            durationDays,
+            startAt,
+            endAt,
+            status: 'aprovado',
+            createdAt: Timestamp.fromDate(new Date())
         };
 
         try {
@@ -148,7 +163,11 @@ export function init() {
         const bannerCard = e.target.closest('.banner-card-admin');
         if (!bannerCard) return;
 
-        const { id, mediaurl, linkurl, mediatype } = bannerCard.dataset;
+        // Lê os dados a partir do dataset usando as chaves camelCase que definimos acima
+        const id = bannerCard.dataset.id;
+        const mediaurl = bannerCard.dataset.mediaUrl;
+        const linkurl = bannerCard.dataset.linkUrl;
+        const mediatype = bannerCard.dataset.mediaType;
 
         // Ação de Editar
         if (e.target.closest('.edit-btn')) {

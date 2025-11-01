@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'indicacoes': module = await import('./dashboard-indicacoes.js'); break;
                 case 'logistica': module = await import('./dashboard-logistica.js'); break;
                 case 'calendario': module = await import('./dashboard-calendario.js'); break;
+                // Chatbot module removed
                 default: 
                     console.warn(`Nenhum módulo definido para a seção: ${sectionId}`); 
                     return;

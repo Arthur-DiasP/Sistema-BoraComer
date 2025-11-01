@@ -2,6 +2,7 @@
 
 import { firestore } from './firebase-config.js';
 import { collection, onSnapshot, Timestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { listenCombinedAds, renderCarousel, renderAdvertiserTiles } from './ads.js';
 import { updateCartBadge } from './main.js';
 
 const formatCurrency = (value) => `R$ ${Number(value).toFixed(2).replace('.', ',')}`;
@@ -25,67 +26,27 @@ const progressBar = document.querySelector('.banner-progress-bar');
 let bannerInterval;
 const SLIDE_DURATION = 5000;
 
+// Render de banners agora centralizado em js/ads.js
 function renderBanners(banners) {
-    if (!bannerContainer || !slidesContainer || !dotsContainer || banners.length === 0) {
-        if (bannerContainer) bannerContainer.style.display = 'none';
+    if (!bannerContainer || !slidesContainer || !dotsContainer) return;
+    if (!banners || banners.length === 0) {
+        bannerContainer.style.display = 'none';
         return;
     }
-    slidesContainer.innerHTML = '';
-    dotsContainer.innerHTML = '';
-    banners.forEach((banner, index) => {
-        const slide = document.createElement('div');
-        slide.className = 'banner-slide';
-        let mediaElement = banner.mediaType === 'video' ? `<video src="${banner.mediaUrl}" autoplay muted loop playsinline></video>` : `<img src="${banner.mediaUrl}" alt="Anúncio ${index + 1}">`;
-        slide.innerHTML = banner.linkUrl ? `<a href="${banner.linkUrl}" target="_blank" rel="noopener noreferrer">${mediaElement}</a>` : mediaElement;
-        slidesContainer.appendChild(slide);
-        const dot = document.createElement('button');
-        dot.className = 'banner-dot';
-        dot.dataset.index = index;
-        dotsContainer.appendChild(dot);
-    });
+    // Usa o renderizador do módulo ads.js
+    renderCarousel(slidesContainer, dotsContainer, progressBar, banners, SLIDE_DURATION);
     bannerContainer.style.display = 'block';
-    startSlider(banners.length);
-}
-
-function startSlider(numSlides) {
-    let currentIndex = 0;
-    const dots = document.querySelectorAll('.banner-dot');
-    function showSlide(index) {
-        if (!slidesContainer) return;
-        slidesContainer.style.transform = `translateX(-${index * 100}%)`;
-        dots.forEach(dot => dot.classList.remove('active'));
-        if (dots[index]) dots[index].classList.add('active');
-        if (progressBar) {
-            progressBar.style.animation = 'none';
-            void progressBar.offsetWidth;
-            progressBar.style.animation = `progressBarAnimation ${SLIDE_DURATION / 1000}s linear forwards`;
-        }
-    }
-    function nextSlide() {
-        currentIndex = (currentIndex + 1) % numSlides;
-        showSlide(currentIndex);
-    }
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            clearInterval(bannerInterval);
-            currentIndex = parseInt(dot.dataset.index);
-            showSlide(currentIndex);
-            bannerInterval = setInterval(nextSlide, SLIDE_DURATION);
-        });
-    });
-    showSlide(0);
-    clearInterval(bannerInterval);
-    if (numSlides > 1) {
-        bannerInterval = setInterval(nextSlide, SLIDE_DURATION);
-    }
 }
 
 function listenToBanners() {
-    onSnapshot(collection(firestore, 'banners'), (snapshot) => {
-        renderBanners(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-        console.error("Erro ao buscar banners:", error);
-        if (bannerContainer) bannerContainer.style.display = 'none';
+    // Array para armazenar todos os anúncios
+    // Use the shared listener to combine system banners and approved user ads
+    listenCombinedAds((allAds) => {
+        if (allAds && allAds.length > 0) {
+            renderBanners(allAds);
+        } else if (bannerContainer) {
+            bannerContainer.style.display = 'none';
+        }
     });
 }
 
@@ -97,19 +58,27 @@ function listenToAdvertisers() {
     if (!advertiserSection || !advertiserSlidesContainer) return;
 
     const now = Timestamp.now();
+    // Aceita anúncios com status 'aprovado' ou 'ativo' (admin usa 'ativo' ao aprovar)
     const q = query(
-        collection(firestore, "advertiserCampaigns"),
-        where("status", "==", "active"),
-        where("startDate", "<=", now)
+        collection(firestore, "anunciosUsuarios"),
+        where("status", "in", ["aprovado", "ativo"])
     );
 
     onSnapshot(q, (snapshot) => {
         const activeAds = snapshot.docs
-            .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(ad => ad.endDate && ad.endDate.toDate() > now.toDate()); // Filtro final no cliente
+            .map(doc => ({ id: doc.id, ...doc.data() }));
 
         if (activeAds.length > 0) {
-            renderAdvertiserBanners(activeAds);
+            // Normaliza e usa renderer compartilhado
+            const normalized = activeAds.map(a => ({
+                id: a.id,
+                nome: a.nome || '',
+                descricao: a.descricao || '',
+                mediaUrl: a.imagemUrl || a.mediaUrl || '',
+                mediaType: a.mediaType || 'image',
+                linkUrl: a.linkUrl || ''
+            }));
+            renderAdvertiserTiles(advertiserSlidesContainer, normalized);
             advertiserSection.style.display = 'block';
         } else {
             advertiserSection.style.display = 'none';
@@ -126,16 +95,16 @@ function renderAdvertiserBanners(ads) {
         const slide = document.createElement('div');
         slide.className = 'advertiser-slide';
         // Envolve a imagem em um link se a oferta for um link clicável (futura expansão)
-        const isUrl = ad.offer.startsWith('http');
-        const linkTagOpen = isUrl ? `<a href="${ad.offer}" target="_blank" rel="noopener">` : '';
+        const isUrl = ad.linkUrl && ad.linkUrl.startsWith('http');
+        const linkTagOpen = isUrl ? `<a href="${ad.linkUrl}" target="_blank" rel="noopener">` : '';
         const linkTagClose = isUrl ? `</a>` : '';
 
         slide.innerHTML = `
             ${linkTagOpen}
-                <img src="${ad.mediaUrl}" alt="${ad.companyName}">
+                <img src="${ad.imagemUrl}" alt="${ad.nome}">
                 <div class="advertiser-info-overlay">
-                    <h3>${ad.companyName}</h3>
-                    <p>${isUrl ? 'Clique para saber mais' : ad.offer}</p>
+                    <h3>${ad.nome}</h3>
+                    <p>${ad.descricao || (isUrl ? 'Clique para saber mais' : '')}</p>
                 </div>
             ${linkTagClose}
         `;

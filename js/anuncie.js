@@ -2,7 +2,7 @@
 
 // Importa as funções necessárias do Firebase
 import { firestore } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, where, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Seletores de Tabs ---
@@ -149,16 +149,43 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Salvando campanha...';
 
             // Coleta os dados do formulário
+            const nome = document.getElementById('anuncio-nome').value;
+            const tipo = document.querySelector('input[name="anuncio-tipo"]:checked').value;
+            const descricao = document.getElementById('anuncio-descricao').value;
+            const imagemUrl = document.getElementById('anuncio-imagem-url').value;
+            const videoUrl = document.getElementById('anuncio-video-url').value || '';
+            const linkUrl = document.getElementById('anuncio-link-url').value || '';
+            const budget = parseFloat(budgetSlider.value);
+
+            // Define duração em dias com base no orçamento (mesma regra da UI)
+            let durationDays = 7;
+            if (budget == 1000) durationDays = 45;
+            else if (budget >= 500) durationDays = 30;
+            else if (budget >= 200) durationDays = 15;
+
+            // Determina mediaUrl e mediaType
+            const mediaUrl = videoUrl || imagemUrl || '';
+            const mediaType = videoUrl ? 'video' : 'image';
+
+            // Usa timestamps do cliente para startAt/endAt (sincronização aceitável)
+            const startAt = Timestamp.fromDate(new Date());
+            const endAt = Timestamp.fromDate(new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000));
+
             const anuncioData = {
-                nome: document.getElementById('anuncio-nome').value,
-                tipo: document.querySelector('input[name="anuncio-tipo"]:checked').value,
-                descricao: document.getElementById('anuncio-descricao').value,
-                imagemUrl: document.getElementById('anuncio-imagem-url').value,
-                videoUrl: document.getElementById('anuncio-video-url').value || '',
-                linkUrl: document.getElementById('anuncio-link-url').value || '', // Adicionado
-                budget: parseFloat(budgetSlider.value),
+                nome,
+                tipo,
+                descricao,
+                imagemUrl,
+                videoUrl,
+                mediaUrl,
+                mediaType,
+                linkUrl,
+                budget,
+                durationDays,
+                startAt,
+                endAt,
                 status: 'pendente',
-                createdAt: serverTimestamp(),
+                createdAt: Timestamp.fromDate(new Date()),
                 userId: userId
             };
 
